@@ -11,7 +11,7 @@ Membres du groupe :
 ## TODO
 Les indicateurs de temps à droite de chaque todo correspondent à leur apparition dans la video :
 https://celene.univ-orleans.fr/mod/page/view.php?id=253647
-- [ ] Maquette du site.
+- [x] Maquette du site.
 - [ ] Créer un tache (0:17).
 - [ ] Créer un dossier (0:10).
 - [ ] Lancer le chronomètre dans une tache, le lance pour le dossier (0:28).
