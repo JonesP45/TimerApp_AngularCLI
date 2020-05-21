@@ -3,4 +3,7 @@ export class Tache {
   titre: string;
   estDemaree: boolean;
   temps: number;
+  dates: CouplesDates[];
 }
+
+type CouplesDates = [Date, Date];

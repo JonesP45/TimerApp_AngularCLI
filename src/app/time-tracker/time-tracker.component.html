@@ -12,11 +12,11 @@
 
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let tache of taches; let i = index">
-      <span (click)="demarerTache(tache)">
-        <i class="fa" [ngClass]="tache.estDemaree ? fa-play-circle-o : fa-play-circle-o"></i>
+      <span (click)="demarerStopperTache(tache)">
+        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
       </span>
-<!--      {{tache.titre}} {{tempsDynamique(tache, i)}}-->
-      {{tache.titre}} {{tache.temps}}
+      {{tache.titre}} {{tempsDynamique(tache, i)}}
+<!--      {{tache.titre}} {{tache.temps}}-->
     </li>
   </ul>
 </div>

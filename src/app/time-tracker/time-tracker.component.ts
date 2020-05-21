@@ -14,6 +14,7 @@ export class TimeTrackerComponent implements OnInit {
   taches: Tache[];
   idTache: number;
   compteur: number[];
+  dateActive: Date[];
   subsTemps: Subscription[] = [];
 
   constructor(private stockageLocalService: StockageLocalService) { }
@@ -25,6 +26,7 @@ export class TimeTrackerComponent implements OnInit {
     this.taches.forEach(element => {
       this.subsTemps.push(new Subscription());
     });
+    this.dateActive = [];
   }
 
   ajouterTache(titreTache) {
@@ -33,7 +35,8 @@ export class TimeTrackerComponent implements OnInit {
       id: this.idTache + 1,
       titre: titreTache.value,
       estDemaree: false,
-      temps: 0
+      temps: 0,
+      dates: []
     };
     this.taches.push(nouvelleTache);
     this.stockageLocalService.stockerTache(nouvelleTache);
@@ -41,16 +44,20 @@ export class TimeTrackerComponent implements OnInit {
     this.idTache++;
   }
 
-  demarerTache(tache: Tache) {
+  demarerStopperTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
     tache.estDemaree = !tache.estDemaree;
     if (tache.estDemaree) {
-      // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
-      this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (tache.temps = valeur));
+      this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
+      // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (tache.temps = valeur));
+      this.dateActive[indice] = new Date();
     } else {
-      // tache.temps += this.compteur[indice];
-      // this.compteur[indice] = 0;
+      tache.temps += this.compteur[indice];
+      this.compteur[indice] = 0;
       this.subsTemps[indice].unsubscribe();
+      const maintenant = new Date();
+      tache.dates.push([this.dateActive[indice], maintenant]);
+      this.dateActive[indice] = null;
     }
   }
 
