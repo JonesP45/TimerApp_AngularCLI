@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Time Tracker</h1>
+  </div>
+
+  <div class="input-group">
+    <input type="text" class="form-control" placeholder="Tâche" #titreTache>
+    <div class="input-group-addon" (click)="ajouterTache(titreTache)">
+      <i class="fa fa-plus-circle"></i>
+    </div>
+  </div>
+
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let tache of taches">
+      {{tache.titre}}
+    </li>
+  </ul>
+</div>
