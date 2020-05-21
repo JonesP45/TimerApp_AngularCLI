@@ -3,10 +3,12 @@
     <h1>Time Tracker</h1>
   </div>
 
-  <div class="input-group">
+  <div class="input-group mb-3">
     <input type="text" class="form-control" placeholder="Tâche" #titreTache>
-    <div class="input-group-addon" (click)="ajouterTache(titreTache)">
-      <i class="fa fa-plus-circle"></i>
+    <div class="input-group-append" (click)="ajouterTache(titreTache)">
+      <span class="input-group-text">
+        <i class="fa fa-lg fa-plus-circle "></i>
+      </span>
     </div>
   </div>
 
