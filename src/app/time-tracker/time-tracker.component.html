@@ -13,12 +13,26 @@
   </div>
 
   <ul class="list-group">
-    <li class="list-group-item" *ngFor="let tache of taches; let i = index">
+    <li class="list-group-item d-flex justify-content-between align-items-center"
+        *ngFor="let tache of taches; let i = index">
       <span (click)="demarerStopperTache(tache)">
         <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
       </span>
       {{tache.titre}} {{tempsDynamique(tache, i)}}
-<!--      {{tache.titre}} {{tache.temps}}-->
+      <!--      {{tache.titre}} {{tache.temps}}-->
+      <span class="list-group-item list-group-item-action" (click)="demarerStopperTache(tache)">
+        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
+      </span>
     </li>
   </ul>
+
+<!--  <ul class="list-group">-->
+<!--    <li class="list-group-item" *ngFor="let tache of taches; let i = index">-->
+<!--      <span (click)="demarerStopperTache(tache)">-->
+<!--        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--      </span>-->
+<!--      {{tache.titre}} {{tempsDynamique(tache, i)}}-->
+<!--&lt;!&ndash;      {{tache.titre}} {{tache.temps}}&ndash;&gt;-->
+<!--    </li>-->
+<!--  </ul>-->
 </div>
