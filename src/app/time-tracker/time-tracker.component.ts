@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Tache} from '../model/tache';
+import {TachesService} from '../services/taches.service';
 import {StockageLocalService} from '../stockage-local.service';
 import {interval, Subscription} from 'rxjs';
 
@@ -9,9 +10,11 @@ import {interval, Subscription} from 'rxjs';
   styles: [
   ]
 })
-export class TimeTrackerComponent implements OnInit {
+export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   taches: Tache[];
+  tachesSubscription: Subscription;
+
   idTache: number;
   compteur: number[];
   dateActive: Date[];
@@ -20,6 +23,11 @@ export class TimeTrackerComponent implements OnInit {
   constructor(private stockageLocalService: StockageLocalService) { }
 
   ngOnInit(): void {
+    this.tachesSubscription = this.tachesService.tachesSubject._subscribe(
+      (taches:Tache[]) => {
+        this.taches = taches;
+      }
+    )
     this.taches = this.stockageLocalService.recupererTaches();
     this.idTache = this.taches.length;
     this.compteur = [];
@@ -63,5 +71,9 @@ export class TimeTrackerComponent implements OnInit {
 
   tempsDynamique(tache: Tache, i: number) {
     return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
+  }
+
+  ngOnDestroy() {
+    this.tachesSubscription.unsubscribe();
   }
 }
