@@ -35,11 +35,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     // this.taches = this.stockageLocalService.recupererTaches();
     // this.idTache = this.taches.length;
     // this.idTache = 0;
-    // this.compteur = [];
-    // this.taches.forEach(element => {
-    //   this.subsTemps.push(new Subscription());
-    // });
-    // this.dateActive = [];
+    this.compteur = [];
+    this.taches.forEach(element => {
+      this.subsTemps.push(new Subscription());
+    });
+    this.dateActive = [];
   }
 
   initForm() {
@@ -54,25 +54,29 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   onSaveTache() {
     const titre = this.tacheForm.get('title').value;
-    const newTache = new Tache(titre);
+    const temps = 0;
+    const estDemaree = false;
+    const Date1 = new Date();
+    const Date2 = new Date();
+    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
     this.tachesService.createNewTache(newTache);
   }
 
-  ajouterTache(titreTache) {
-    // let nouvelleTache = {
-    const nouvelleTache = {
-      id: this.idTache + 1,
-      titre: titreTache.value,
-      estDemaree: false,
-      temps: 0,
-      dates: []
-    };
-    // this.taches.push(nouvelleTache);
-    // this.stockageLocalService.stockerTache(nouvelleTache);
-    this.tachesService.createNewTache(titreTache);
-    titreTache.value = '';
-    this.idTache++;
-  }
+  // ajouterTache(titreTache) {
+  //   // let nouvelleTache = {
+  //   const nouvelleTache = {
+  //     id: this.idTache + 1,
+  //     titre: titreTache.value,
+  //     estDemaree: false,
+  //     temps: 0,
+  //     dates: []
+  //   };
+  //   // this.taches.push(nouvelleTache);
+  //   // this.stockageLocalService.stockerTache(nouvelleTache);
+  //   this.tachesService.createNewTache(titreTache);
+  //   titreTache.value = '';
+  //   this.idTache++;
+  // }
 
   demarerStopperTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
@@ -86,13 +90,17 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       this.compteur[indice] = 0;
       this.subsTemps[indice].unsubscribe();
       const maintenant = new Date();
-      tache.dates.push([this.dateActive[indice], maintenant]);
+      tache.date1 = this.dateActive[indice];
+      tache.date2 = maintenant;
       this.dateActive[indice] = null;
     }
   }
 
   tempsDynamique(tache: Tache, i: number) {
     return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
+  }
+  supprimerTache(tache: Tache) {
+    this.tachesService.removeTache(tache);
   }
 
   ngOnDestroy() {

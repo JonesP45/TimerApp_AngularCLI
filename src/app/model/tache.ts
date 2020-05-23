@@ -1,10 +1,6 @@
 export class Tache {
-  estDemaree: boolean;
-  temps: number;
-  dates: CouplesDates[];
-  constructor(public titre: string){
+  constructor(public titre: string, public temps: number,
+              public estDemaree: boolean, public date1: Date, public date2: Date){
   }
 }
-
-
 type CouplesDates = [Date, Date];
