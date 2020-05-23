@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import {Subject} from 'rxjs';
 import { Tache } from '../model/tache';
 import * as firebase from 'firebase';
 import DataSnapshot = firebase.database.DataSnapshot;
-import {Subject} from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,8 @@ export class TachesService {
 
   createNewTache(newTache: Tache){
     this.taches.push(newTache);
+    this.saveTache();
+    this.emitTaches();
   }
 
   removeTache(tache: Tache){
@@ -59,5 +62,7 @@ export class TachesService {
       }
     );
     this.taches.splice(tacheIndexToRemove, 1);
+    this.saveTache();
+    this.emitTaches();
   }
 }

@@ -4,21 +4,31 @@
   </div>
 
   <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Tâche" #titreTache>
-    <div class="input-group-append" (click)="ajouterTache(titreTache)">
-      <span class="input-group-text">
-        <i class="fa fa-lg fa-plus-circle "></i>
-      </span>
-    </div>
+    <form [formGroup]="tacheForm" (ngSubmit)="onSaveTache()">
+      <div class="form-group">
+        <label for="title">Titre</label>
+        <input type="text" id="title"
+               class="form-control" formControlName="title">
+      </div>
+      <button class="btn btn-success"
+              type="submit">Enregistrer
+      </button>
+    </form>
+<!--    <input type="text" class="form-control" placeholder="Tâche" #titreTache>-->
+<!--    <div class="input-group-append" (click)="ajouterTache(titreTache)">-->
+<!--      <span class="input-group-text">-->
+<!--        <i class="fa fa-lg fa-plus-circle "></i>-->
+<!--      </span>-->
+<!--    </div>-->
   </div>
 
-  <ul class="list-group">
-    <li class="list-group-item" *ngFor="let tache of taches; let i = index">
-      <span (click)="demarerStopperTache(tache)">
-        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
-      </span>
-      {{tache.titre}} {{tempsDynamique(tache, i)}}
-<!--      {{tache.titre}} {{tache.temps}}-->
-    </li>
-  </ul>
+<!--  <ul class="list-group">-->
+<!--    <li class="list-group-item" *ngFor="let tache of taches; let i = index">-->
+<!--      <span (click)="demarerStopperTache(tache)">-->
+<!--        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--      </span>-->
+<!--      {{tache.titre}} {{tempsDynamique(tache, i)}}-->
+<!--&lt;!&ndash;      {{tache.titre}} {{tache.temps}}&ndash;&gt;-->
+<!--    </li>-->
+<!--  </ul>-->
 </div>

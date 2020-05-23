@@ -3,6 +3,7 @@ import {Tache} from '../model/tache';
 import {TachesService} from '../services/taches.service';
 import {StockageLocalService} from '../stockage-local.service';
 import {interval, Subscription} from 'rxjs';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-time-tracker',
@@ -19,22 +20,42 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   compteur: number[];
   dateActive: Date[];
   subsTemps: Subscription[] = [];
+  tacheForm: FormGroup;
 
-  constructor(private stockageLocalService: StockageLocalService) { }
+  constructor(private tachesService: TachesService, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.tachesSubscription = this.tachesService.tachesSubject._subscribe(
-      (taches:Tache[]) => {
+    this.tachesSubscription = this.tachesService.tachesSubject.subscribe(
+      (taches: Tache[]) => {
         this.taches = taches;
       }
-    )
-    this.taches = this.stockageLocalService.recupererTaches();
-    this.idTache = this.taches.length;
-    this.compteur = [];
-    this.taches.forEach(element => {
-      this.subsTemps.push(new Subscription());
+    );
+    this.tachesService.emitTaches();
+    this.initForm();
+    // this.taches = this.stockageLocalService.recupererTaches();
+    // this.idTache = this.taches.length;
+    // this.idTache = 0;
+    // this.compteur = [];
+    // this.taches.forEach(element => {
+    //   this.subsTemps.push(new Subscription());
+    // });
+    // this.dateActive = [];
+  }
+
+  initForm() {
+    this.tacheForm = this.formBuilder.group({
+      title: ['', Validators.required]
     });
-    this.dateActive = [];
+  }
+
+  onDeleteTache(tache: Tache) {
+    this.tachesService.removeTache(tache);
+  }
+
+  onSaveTache() {
+    const titre = this.tacheForm.get('title').value;
+    const newTache = new Tache(titre);
+    this.tachesService.createNewTache(newTache);
   }
 
   ajouterTache(titreTache) {
@@ -46,8 +67,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       temps: 0,
       dates: []
     };
-    this.taches.push(nouvelleTache);
-    this.stockageLocalService.stockerTache(nouvelleTache);
+    // this.taches.push(nouvelleTache);
+    // this.stockageLocalService.stockerTache(nouvelleTache);
+    this.tachesService.createNewTache(titreTache);
     titreTache.value = '';
     this.idTache++;
   }
