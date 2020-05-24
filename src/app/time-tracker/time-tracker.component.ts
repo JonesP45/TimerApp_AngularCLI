@@ -113,7 +113,10 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   tempsDynamique(tache: Tache, i: number) {
-    return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
+    const date = new Date(0);
+    date.setSeconds(this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps); // specify value for SECONDS here
+    return date.toISOString().substr(11, 8);
+    // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
 
   supprimerTache(tache: Tache) {
