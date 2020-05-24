@@ -29,6 +29,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 
 # CE QU'IL RESTE FAIRE
-- le minuteur en format date (il me semble que le prof donne un semblant d'explication a la fin de son 1er tuto)
 - catégories
-- edition tache dont les quickstart
+- edition tache dont les quickstart, FONCTIONNE A MOITIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+C'est sur la branch jp4
