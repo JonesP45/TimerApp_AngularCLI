@@ -15,12 +15,13 @@
 
         <label for="type">Ajouter </label>
         <select name="type" id="type" formControlName="type">
-          <option value="tache"> tache </option>
+          <option value="tache" selected> tache </option>
           <option value="categorie"> categorie </option>
         </select>
 
         <label for="parent"> à </label>
         <select name="parent" id="parent" formControlName="parent">
+          <option value="-1">Aucun</option>
           <option *ngFor="let categorie of categories; let i = index" value="{{categorie.titre}}">
             {{categorie.titre}}
           </option>
@@ -42,18 +43,60 @@
   </div>
 
   <ul class="list-group">
-    <li class="list-group-item" *ngFor="let tache of taches; let i = index">
-      <span (click)="demarerStopperTache(tache)">
-        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
-      </span>
-        {{tache.titre}} {{tempsDynamique(tache, i)}}
-      <span (click)="modifierTache(tache)">
-        <i class="fa fa-edit"></i>
-      </span>
-      <span (click)="supprimerTache(tache)">
-        <i class="fa fa-remove"></i>
-      </span>
-<!--      {{tache.titre}} {{tache.temps}}-->
+    <li class="list-group-item" *ngFor="let categorie of categories; let i = index">
+      {{categorie.titre}}
+
+      <ul>
+        <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let i = index">
+
+          <span *ngIf="tache.parent === getCategorieIdByName(categorie.titre)">
+            <span (click)="demarerStopperTache(tache)">
+              <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
+            </span>
+
+            {{tache.titre}} {{tempsDynamique(tache, i)}}
+
+            <span (click)="modifierTache(tache)">
+              <i class="fa fa-edit"></i>
+            </span>
+
+            <span (click)="supprimerTache(tache)">
+              <i class="fa fa-remove"></i>
+            </span>
+          </span>
+
+        </li>
+      </ul>
+
     </li>
+
+    <li class="list-group-item" *ngFor="let tache of getTacheWithoutParent(); let i = index">
+        <span (click)="demarerStopperTache(tache)">
+          <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
+        </span>
+
+        {{tache.titre}} {{tempsDynamique(tache, i)}}
+
+        <span (click)="modifierTache(tache)">
+          <i class="fa fa-edit"></i>
+        </span>
+
+        <span (click)="supprimerTache(tache)">
+          <i class="fa fa-remove"></i>
+        </span>
+    </li>
+
+<!--    <li class="list-group-item" *ngFor="let tache of taches; let i = index">-->
+<!--      <span (click)="demarerStopperTache(tache)">-->
+<!--        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--      </span>-->
+<!--        {{tache.titre}} {{tempsDynamique(tache, i)}}-->
+<!--      <span (click)="modifierTache(tache)">-->
+<!--        <i class="fa fa-edit"></i>-->
+<!--      </span>-->
+<!--      <span (click)="supprimerTache(tache)">-->
+<!--        <i class="fa fa-remove"></i>-->
+<!--      </span>-->
+<!--    </li>-->
   </ul>
 </div>

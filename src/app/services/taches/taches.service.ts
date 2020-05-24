@@ -58,13 +58,13 @@ export class TachesService {
     this.emitTaches();
   }
 
-  createNewQuickStartTache(newTache: Tache) {
-    // newTache.titre += ++this.nbQuickStartTaches;
-    // firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
-    this.taches.push(newTache);
-    this.saveTache();
-    this.emitTaches();
-  }
+  // createNewQuickStartTache(newTache: Tache) {
+  //   newTache.titre += ++this.nbQuickStartTaches;
+  //   firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
+  //   this.taches.push(newTache);
+  //   this.saveTache();
+  //   this.emitTaches();
+  // }
 
   removeTache(tache: Tache) {
     const tacheIndexToRemove = this.taches.findIndex(
