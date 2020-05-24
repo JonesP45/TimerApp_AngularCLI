@@ -4,8 +4,6 @@ import {TachesService} from '../services/taches/taches.service';
 // import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
 import {interval, Subscription} from 'rxjs';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import * as firebase from 'firebase';
-import DataSnapshot = firebase.database.DataSnapshot;
 
 @Component({
   selector: 'app-time-tracker',
@@ -23,18 +21,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   dateActive: Date[];
   subsTemps: Subscription[] = [];
   tacheForm: FormGroup;
-  nbQuickStartTaches: number;
 
   constructor(private tachesService: TachesService, private formBuilder: FormBuilder) {
-    // firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
-    //   this.nbTachesQuickStart = data.val() ? data.val() : 0;
-    // });
   }
 
   ngOnInit(): void {
-    firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
-      this.nbQuickStartTaches = data.val() ? data.val() : 0;
-    });
     this.tachesSubscription = this.tachesService.tachesSubject.subscribe(
       (taches: Tache[]) => {
         this.taches = taches;
@@ -50,6 +41,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       this.subsTemps.push(new Subscription());
     });
     this.dateActive = [];
+    // this.taches.forEach((tache: Tache) => {
+    //   if (tache.estDemaree) {
+    //     this.demarerStopperTache(tache);
+    //   }
+    // });
   }
 
   initForm() {
@@ -73,14 +69,13 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   onQuickStart() {
-    const titre = 'Quick Start ' + ++this.nbQuickStartTaches;
+    const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
-    const estDemaree = false;
+    const estDemaree = true;
     const Date1 = new Date();
     const Date2 = new Date();
     const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
-    this.tachesService.createNewTache(newTache);
-    firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
+    this.tachesService.createNewQuickStartTache(newTache);
   }
 
   // ajouterTache(titreTache) {
@@ -120,11 +115,16 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   tempsDynamique(tache: Tache, i: number) {
     return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
+
   supprimerTache(tache: Tache) {
     this.tachesService.removeTache(tache);
   }
 
   ngOnDestroy() {
     this.tachesSubscription.unsubscribe();
+  }
+
+  modifierTache(tache: Tache) {
+
   }
 }

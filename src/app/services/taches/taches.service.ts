@@ -11,18 +11,20 @@ import DataSnapshot = firebase.database.DataSnapshot;
 export class TachesService {
 
   taches: Tache[] = [];
-  // nbTachesQuickStart: number;
+  quickStartTaches: Tache[] = [];
+  nbQuickStartTaches: number;
   tachesSubject = new Subject<Tache[]>();
 
   constructor() {
     this.getTaches();
-    // firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
-    //   this.nbTachesQuickStart = data.val() ? data.val() : 0;
-    // });
+    firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
+      this.nbQuickStartTaches = data.val() && data.val() >= 0 ? data.val() : 0;
+    });
   }
 
   emitTaches() {
     this.tachesSubject.next(this.taches);
+    // this.tachesSubject.next(this.quickStartTaches);
   }
 
   saveTache() {
@@ -51,13 +53,29 @@ export class TachesService {
     );
   }
 
-  createNewTache(newTache: Tache){
+  createNewTache(newTache: Tache) {
     this.taches.push(newTache);
     this.saveTache();
     this.emitTaches();
   }
 
-  removeTache(tache: Tache){
+  createNewQuickStartTache(newTache: Tache) {
+    newTache.titre += ++this.nbQuickStartTaches;
+    firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
+    this.taches.push(newTache);
+    this.quickStartTaches.push(newTache);
+    this.saveTache();
+    this.emitTaches();
+  }
+
+  removeTache(tache: Tache) {
+    const quickStartTacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
     const tacheIndexToRemove = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){
@@ -65,6 +83,10 @@ export class TachesService {
         }
       }
     );
+    if (quickStartTacheIndexToRemove !== -1) {
+      this.quickStartTaches.splice(quickStartTacheIndexToRemove, 1);
+      firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
+    }
     this.taches.splice(tacheIndexToRemove, 1);
     this.saveTache();
     this.emitTaches();

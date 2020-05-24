@@ -33,6 +33,9 @@
         <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
       </span>
         {{tache.titre}} {{tempsDynamique(tache, i)}}
+      <span (click)="modifierTache(tache)">
+        <i class="fa fa-edit"></i>
+      </span>
       <span (click)="supprimerTache(tache)">
         <i class="fa fa-remove"></i>
       </span>
