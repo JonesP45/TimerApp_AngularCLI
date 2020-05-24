@@ -51,6 +51,9 @@
 
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let categorie of categories; let i = index">
+<!--      <span (click)="demarerStopperTache(tache)">-->
+<!--        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--      </span>-->
       {{categorie.titre}}
       <span (click)="supprimerCategorie(categorie)">
         <i class="fa fa-remove"></i>
