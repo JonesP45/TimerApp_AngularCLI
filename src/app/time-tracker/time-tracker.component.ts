@@ -211,6 +211,15 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.tachesService.removeTache(tache);
   }
 
+  supprimerCategorie(categorie: Categorie) {
+    const id = this.getCategorieIdByName(categorie.titre);
+    const children = this.getCategorieChildren(id);
+    children.forEach((child) => {
+      this.supprimerTache(child);
+    });
+    this.categorieService.removeCategorie(categorie);
+  }
+
   modifierTache(tache: Tache) {
   }
 

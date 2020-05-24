@@ -33,7 +33,7 @@
 
         <div class="form-group">
           <label for="title">Nom : </label>
-          <input type="text" id="title" class="form-control" placeholder="Nom de la tâche" formControlName="title">
+          <input type="text" id="title" class="form-control" placeholder="Nom" formControlName="title">
         </div>
       </div>
 
@@ -52,6 +52,9 @@
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let categorie of categories; let i = index">
       {{categorie.titre}}
+      <span (click)="supprimerCategorie(categorie)">
+        <i class="fa fa-remove"></i>
+      </span>
 
       <ul>
         <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let i = index">
