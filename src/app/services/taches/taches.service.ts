@@ -17,9 +17,18 @@ export class TachesService {
 
   constructor() {
     this.getTaches();
+    let reset = false;
     firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
-      this.nbQuickStartTaches = data.val() && data.val() >= 0 ? data.val() : 0;
+      if (data.val() && data.val() < 0) {
+        reset = true;
+        this.nbQuickStartTaches = 0;
+      } else {
+        this.nbQuickStartTaches = data.val() ? data.val() : 0;
+      }
     });
+    if (reset) {
+      firebase.database().ref('/nbQuickStartTaches').set(0);
+    }
   }
 
   emitTaches() {
@@ -99,6 +108,7 @@ export class TachesService {
         }
       }
     );
+    console.log(quickStartTacheIndexToRemove);
     const tacheIndexToRemove = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){

@@ -55,9 +55,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     });
   }
 
-  onDeleteTache(tache: Tache) {
-    this.tachesService.removeTache(tache);
-  }
+  // onDeleteTache(tache: Tache) {
+  //   this.tachesService.removeTache(tache);
+  // }
 
   onSaveTache() {
     const titre = this.tacheForm.get('title').value;
@@ -73,8 +73,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
     const estDemaree = true;
-    const Date1 = new Date();
-    const Date2 = new Date();
+    // const Date1 = new Date();
+    // const Date2 = new Date();
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/);
     this.tachesService.createNewQuickStartTache(newTache);
   }
