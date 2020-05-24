@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Tache} from '../model/tache';
 import {TachesService} from '../services/taches/taches.service';
-import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
+// import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
 import {interval, Subscription} from 'rxjs';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import * as firebase from 'firebase';
+import DataSnapshot = firebase.database.DataSnapshot;
 
 @Component({
   selector: 'app-time-tracker',
@@ -16,16 +18,23 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   taches: Tache[];
   tachesSubscription: Subscription;
 
-  idTache: number;
+  // idTache: number;
   compteur: number[];
   dateActive: Date[];
   subsTemps: Subscription[] = [];
   tacheForm: FormGroup;
-  quickStartForm: FormGroup;
+  nbQuickStartTaches: number;
 
-  constructor(private tachesService: TachesService, private formBuilder: FormBuilder) { }
+  constructor(private tachesService: TachesService, private formBuilder: FormBuilder) {
+    // firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
+    //   this.nbTachesQuickStart = data.val() ? data.val() : 0;
+    // });
+  }
 
   ngOnInit(): void {
+    firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
+      this.nbQuickStartTaches = data.val() ? data.val() : 0;
+    });
     this.tachesSubscription = this.tachesService.tachesSubject.subscribe(
       (taches: Tache[]) => {
         this.taches = taches;
@@ -37,7 +46,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     // this.idTache = this.taches.length;
     // this.idTache = 0;
     this.compteur = [];
-    this.taches.forEach(element => {
+    this.taches.forEach(() => {
       this.subsTemps.push(new Subscription());
     });
     this.dateActive = [];
@@ -64,13 +73,14 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   onQuickStart() {
-    const titre = 'Quick Start';
+    const titre = 'Quick Start ' + ++this.nbQuickStartTaches;
     const temps = 0;
     const estDemaree = false;
     const Date1 = new Date();
     const Date2 = new Date();
     const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
     this.tachesService.createNewTache(newTache);
+    firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
   }
 
   // ajouterTache(titreTache) {

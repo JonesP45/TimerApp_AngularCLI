@@ -11,12 +11,14 @@ import DataSnapshot = firebase.database.DataSnapshot;
 export class TachesService {
 
   taches: Tache[] = [];
-  nbTachesQuickStart: number;
+  // nbTachesQuickStart: number;
   tachesSubject = new Subject<Tache[]>();
 
   constructor() {
     this.getTaches();
-
+    // firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
+    //   this.nbTachesQuickStart = data.val() ? data.val() : 0;
+    // });
   }
 
   emitTaches() {
