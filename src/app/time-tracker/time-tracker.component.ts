@@ -92,12 +92,18 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   onQuickStart() {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
-    const estDemaree = true;
+    const estDemaree = false;
     // const Date1 = new Date();
     // const Date2 = new Date();
     const parent = -1;
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
     this.tachesService.createNewQuickStartTache(newTache);
+    this.tachesService.emitTaches();
+    this.taches.forEach((tache) => {
+      if (tache === newTache) {
+        this.demarerStopperTache(tache);
+      }
+    });
   }
 
   onSaveCategorie() {
@@ -215,6 +221,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   modifierTache(tache: Tache) {
+
   }
 
   ngOnDestroy() {
