@@ -1,9 +1,9 @@
 export class Tache {
   constructor(public titre: string, public temps: number, public estDemaree: boolean,
-              public date1: Date, public date2: Date) {}
+              /*public date1: Date, public date2: Date*/) {}
 }
 
-type CouplesDates = [Date, Date];
+// type CouplesDates = [Date, Date];
 
 /*private static reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 private static reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;

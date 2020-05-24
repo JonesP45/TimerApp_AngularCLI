@@ -18,7 +18,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   // idTache: number;
   compteur: number[];
-  dateActive: Date[];
+  // dateActive: Date[];
   subsTemps: Subscription[] = [];
   tacheForm: FormGroup;
 
@@ -40,11 +40,12 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.taches.forEach(() => {
       this.subsTemps.push(new Subscription());
     });
-    this.dateActive = [];
+    // this.dateActive = [];
     // this.taches.forEach((tache: Tache) => {
-    //   if (tache.estDemaree) {
-    //     this.demarerStopperTache(tache);
-    //   }
+      // this.dateActive.push(tache.date1);
+      // if (tache.estDemaree) {
+      //   this.demarerStopperTache(tache);
+      // }
     // });
   }
 
@@ -62,9 +63,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = this.tacheForm.get('title').value;
     const temps = 0;
     const estDemaree = false;
-    const Date1 = new Date();
-    const Date2 = new Date();
-    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
+    // const Date1 = new Date();
+    // const Date2 = new Date();
+    const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/);
     this.tachesService.createNewTache(newTache);
   }
 
@@ -74,7 +75,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = true;
     const Date1 = new Date();
     const Date2 = new Date();
-    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
+    const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/);
     this.tachesService.createNewQuickStartTache(newTache);
   }
 
@@ -100,15 +101,17 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     if (tache.estDemaree) {
       this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
       // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (tache.temps = valeur));
-      this.dateActive[indice] = new Date();
+      // this.dateActive[indice] = new Date();
     } else {
       tache.temps += this.compteur[indice];
       this.compteur[indice] = 0;
       this.subsTemps[indice].unsubscribe();
-      const maintenant = new Date();
-      tache.date1 = this.dateActive[indice];
-      tache.date2 = maintenant;
-      this.dateActive[indice] = null;
+      this.tachesService.updateTemps(tache);
+
+      // const maintenant = new Date();
+      // tache.date1 = this.dateActive[indice];
+      // tache.date2 = maintenant;
+      // this.dateActive[indice] = null;
     }
   }
 

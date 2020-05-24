@@ -39,6 +39,29 @@ export class TachesService {
       });
   }
 
+  updateTemps(tache: Tache) {
+    const quickStartTacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
+    const tacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
+    if (quickStartTacheIndexToRemove !== -1) {
+      this.quickStartTaches[quickStartTacheIndexToRemove] = tache;
+    }
+    this.taches[tacheIndexToRemove] = tache;
+    this.saveTache();
+    this.emitTaches();
+  }
+
   getSingleTache(id: number) {
     return new Promise(
       (resolve, reject) => {
@@ -91,4 +114,5 @@ export class TachesService {
     this.saveTache();
     this.emitTaches();
   }
+
 }
