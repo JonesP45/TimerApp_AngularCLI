@@ -11,16 +11,16 @@
 
   <div class="input-group mb-3">
     <form [formGroup]="saveForm" (ngSubmit)="onSave()">
-      <div class="form-group">
+      <div class="form-row">
 
         <label for="type">Ajouter </label>
-        <select name="type" id="type" formControlName="type">
-          <option value="tache" selected> tache </option>
+        <select class="form-control" name="type" id="type" formControlName="type">
+          <option value="tache"> tache </option>
           <option value="categorie"> categorie </option>
         </select>
 
         <label for="parent"> à </label>
-        <select name="parent" id="parent" formControlName="parent">
+        <select class="form-control" name="parent" id="parent" formControlName="parent">
           <option value="-1">Aucun</option>
           <option *ngFor="let categorie of categories; let i = index" value="{{categorie.titre}}">
             {{categorie.titre}}
@@ -30,7 +30,7 @@
         <label for="title">Nom : </label>
         <input type="text" id="title" class="form-control" placeholder="Nom" formControlName="title">
       </div>
-      <button class="btn btn-success"
+      <button [disabled]="saveForm.invalid" class="btn btn-success"
               type="submit">Ajouter
       </button>
     </form>

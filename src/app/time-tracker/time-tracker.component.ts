@@ -95,7 +95,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = true;
     const date1 = new Date();
     const date2 = new Date();
-    const parent = 0;
+    const parent = -1;
     const newTache = new Tache(titre, temps, estDemaree, date1, date2, parent);
     this.tachesService.createNewTache(newTache);
   }
