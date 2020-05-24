@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Subject} from 'rxjs';
-import { Tache } from '../model/tache';
+import { Tache } from '../../model/tache';
 import * as firebase from 'firebase';
 import DataSnapshot = firebase.database.DataSnapshot;
 

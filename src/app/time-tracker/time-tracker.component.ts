@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Tache} from '../model/tache';
-import {TachesService} from '../services/taches.service';
-import {StockageLocalService} from '../stockage-local.service';
+import {TachesService} from '../services/taches/taches.service';
+import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
 import {interval, Subscription} from 'rxjs';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
