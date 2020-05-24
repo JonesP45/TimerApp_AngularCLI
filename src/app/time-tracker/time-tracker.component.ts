@@ -23,7 +23,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   // idTache: number;
   compteur: number[];
-  dateActive: Date[];
+  // dateActive: Date[];
   subsTemps: Subscription[] = [];
   saveForm: FormGroup;
   tree: Map<object, any>;
@@ -52,7 +52,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.taches.forEach(() => {
       this.subsTemps.push(new Subscription());
     });
-    this.dateActive = [];
+    // this.dateActive = [];
     // this.taches.forEach((tache: Tache) => {
     //   if (tache.estDemaree) {
     //     this.demarerStopperTache(tache);
@@ -82,10 +82,10 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = this.saveForm.get('title').value;
     const temps = 0;
     const estDemaree = false;
-    const date1 = new Date();
-    const date2 = new Date();
+    // const date1 = new Date();
+    // const date2 = new Date();
     const parent = this.saveForm.get('parent').value === '' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
-    const newTache = new Tache(titre, temps, estDemaree, date1, date2, parent);
+    const newTache = new Tache(titre, temps, estDemaree, /*date1, date2, */parent);
     this.tachesService.createNewTache(newTache);
   }
 
@@ -93,11 +93,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
     const estDemaree = true;
-    const date1 = new Date();
-    const date2 = new Date();
+    // const Date1 = new Date();
+    // const Date2 = new Date();
     const parent = -1;
-    const newTache = new Tache(titre, temps, estDemaree, date1, date2, parent);
-    this.tachesService.createNewTache(newTache);
+    const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
+    this.tachesService.createNewQuickStartTache(newTache);
   }
 
   onSaveCategorie() {
@@ -186,20 +186,25 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     if (tache.estDemaree) {
       this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
       // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (tache.temps = valeur));
-      this.dateActive[indice] = new Date();
+      // this.dateActive[indice] = new Date();
     } else {
       tache.temps += this.compteur[indice];
       this.compteur[indice] = 0;
       this.subsTemps[indice].unsubscribe();
-      const maintenant = new Date();
-      tache.date1 = this.dateActive[indice];
-      tache.date2 = maintenant;
-      this.dateActive[indice] = null;
+      this.tachesService.updateTemps(tache);
+
+      // const maintenant = new Date();
+      // tache.date1 = this.dateActive[indice];
+      // tache.date2 = maintenant;
+      // this.dateActive[indice] = null;
     }
   }
 
   tempsDynamique(tache: Tache, i: number) {
-    return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
+    const date = new Date(0);
+    date.setSeconds(this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps); // specify value for SECONDS here
+    return date.toISOString().substr(11, 8);
+    // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
 
   supprimerTache(tache: Tache) {

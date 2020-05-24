@@ -11,19 +11,28 @@ import DataSnapshot = firebase.database.DataSnapshot;
 export class TachesService {
 
   taches: Tache[] = [];
-  // nbQuickStartTaches: number;
+  quickStartTaches: Tache[] = [];
+  nbQuickStartTaches: number;
   tachesSubject = new Subject<Tache[]>();
 
   constructor() {
     this.getTaches();
-    // firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
-    //   this.nbQuickStartTaches = data.val() && data.val() >= 0 ? data.val() : 0;
-    // });
+    let reset = false;
+    firebase.database().ref('/nbQuickStartTaches').on('value', (data: DataSnapshot) => {
+      if (data.val() && data.val() < 0) {
+        reset = true;
+        this.nbQuickStartTaches = 0;
+      } else {
+        this.nbQuickStartTaches = data.val() ? data.val() : 0;
+      }
+    });
+    // if (reset) {
+    //   firebase.database().ref('/nbQuickStartTaches').set(0);
+    // }
   }
 
   emitTaches() {
     this.tachesSubject.next(this.taches);
-    // this.tachesSubject.next(this.quickStartTaches);
   }
 
   saveTache() {
@@ -36,6 +45,29 @@ export class TachesService {
         this.taches = data.val() ? data.val() : [];
         this.emitTaches();
       });
+  }
+
+  updateTemps(tache: Tache) {
+    const quickStartTacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
+    const tacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
+    if (quickStartTacheIndexToRemove !== -1) {
+      this.quickStartTaches[quickStartTacheIndexToRemove] = tache;
+    }
+    this.taches[tacheIndexToRemove] = tache;
+    this.saveTache();
+    this.emitTaches();
   }
 
   // getSingleTache(id: number) {
@@ -58,15 +90,23 @@ export class TachesService {
     this.emitTaches();
   }
 
-  // createNewQuickStartTache(newTache: Tache) {
-  //   newTache.titre += ++this.nbQuickStartTaches;
-  //   firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
-  //   this.taches.push(newTache);
-  //   this.saveTache();
-  //   this.emitTaches();
-  // }
+  createNewQuickStartTache(newTache: Tache) {
+    newTache.titre += ++this.nbQuickStartTaches;
+    firebase.database().ref('/nbQuickStartTaches').set(this.nbQuickStartTaches);
+    this.taches.push(newTache);
+    this.quickStartTaches.push(newTache);
+    this.saveTache();
+    this.emitTaches();
+  }
 
   removeTache(tache: Tache) {
+    const quickStartTacheIndexToRemove = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
     const tacheIndexToRemove = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){
@@ -74,6 +114,10 @@ export class TachesService {
         }
       }
     );
+    if (quickStartTacheIndexToRemove !== -1) {
+      this.quickStartTaches.splice(quickStartTacheIndexToRemove, 1);
+      firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
+    }
     this.taches.splice(tacheIndexToRemove, 1);
     this.saveTache();
     this.emitTaches();
