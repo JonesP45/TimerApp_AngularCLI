@@ -10,13 +10,27 @@
   </div>
 
   <div class="input-group mb-3">
-    <form [formGroup]="tacheForm" (ngSubmit)="onSaveTache()">
+    <form [formGroup]="saveForm" (ngSubmit)="onSave()">
       <div class="form-group">
-        <label for="title">Titre</label>
-        <input type="text" id="title" class="form-control" placeholder="Nouvelle tache" formControlName="title">
+
+        <label for="type">Ajouter </label>
+        <select name="type" id="type" formControlName="type">
+          <option value="tache"> tache </option>
+          <option value="categorie"> categorie </option>
+        </select>
+
+        <label for="parent"> à </label>
+        <select name="parent" id="parent" formControlName="parent">
+          <option *ngFor="let categorie of categories; let i = index" value="{{categorie.titre}}">
+            {{categorie.titre}}
+          </option>
+        </select>
+
+        <label for="title">Nom : </label>
+        <input type="text" id="title" class="form-control" placeholder="Nom" formControlName="title">
       </div>
       <button class="btn btn-success"
-              type="submit">Enregistrer
+              type="submit">Ajouter
       </button>
     </form>
 <!--    <input type="text" class="form-control" placeholder="Tâche" #titreTache>-->

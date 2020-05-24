@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Tache} from '../model/tache';
+import {Categorie} from '../model/categorie';
 import {TachesService} from '../services/taches/taches.service';
+import {CategorieService} from '../services/categories/categorie.service';
 // import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
 import {interval, Subscription} from 'rxjs';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+
 
 @Component({
   selector: 'app-time-tracker',
@@ -13,19 +16,27 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class TimeTrackerComponent implements OnInit, OnDestroy {
 
+  categories: Categorie[];
   taches: Tache[];
+  categoriesSubscription: Subscription;
   tachesSubscription: Subscription;
 
   // idTache: number;
   compteur: number[];
   dateActive: Date[];
   subsTemps: Subscription[] = [];
-  tacheForm: FormGroup;
+  saveForm: FormGroup;
 
-  constructor(private tachesService: TachesService, private formBuilder: FormBuilder) {
+  constructor(private tachesService: TachesService, private formBuilder: FormBuilder, private categorieService: CategorieService) {
   }
 
   ngOnInit(): void {
+    this.categoriesSubscription = this.categorieService.categorieSubject.subscribe(
+      (categories: Categorie[]) => {
+        this.categories = categories;
+      }
+    );
+    this.categorieService.emitCategorie();
     this.tachesSubscription = this.tachesService.tachesSubject.subscribe(
       (taches: Tache[]) => {
         this.taches = taches;
@@ -49,22 +60,29 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   initForm() {
-    this.tacheForm = this.formBuilder.group({
-      title: ['', Validators.required]
+    this.saveForm = this.formBuilder.group({
+      type: ['', Validators.required],
+      title: ['', Validators.required],
+      parent: ['', Validators.required]
     });
   }
 
-  onDeleteTache(tache: Tache) {
-    this.tachesService.removeTache(tache);
+  onSave() {
+    if (this.saveForm.get('type').value === 'tache') {
+      this.onSaveTache();
+    } else {
+      this.onSaveCategorie();
+    }
   }
 
   onSaveTache() {
-    const titre = this.tacheForm.get('title').value;
+    const titre = this.saveForm.get('title').value;
     const temps = 0;
     const estDemaree = false;
-    const Date1 = new Date();
-    const Date2 = new Date();
-    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
+    const date1 = new Date();
+    const date2 = new Date();
+    const parent = this.saveForm.get('parent').value === '' ? 0 : this.getCategorieIdByName(this.saveForm.get('parent').value);
+    const newTache = new Tache(titre, temps, estDemaree, date1, date2, parent);
     this.tachesService.createNewTache(newTache);
   }
 
@@ -72,10 +90,45 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
     const estDemaree = true;
-    const Date1 = new Date();
-    const Date2 = new Date();
-    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
+    const date1 = new Date();
+    const date2 = new Date();
+    const parent = 0;
+    const newTache = new Tache(titre, temps, estDemaree, date1, date2, parent);
     this.tachesService.createNewQuickStartTache(newTache);
+  }
+
+  onSaveCategorie() {
+    const titre = this.saveForm.get('title').value;
+    const temps = 0;
+    const parent = this.saveForm.get('parent').value === '' ? 0 : this.getCategorieIdByName(this.saveForm.get('parent').value);
+    const newCategorie = new Categorie(titre, temps, parent);
+    this.categorieService.createNewCategorie(newCategorie);
+  }
+
+  getCategorieChildren(categorieId: number) {
+    const res = [];
+    this.categories.forEach((categorie) => {
+      if (categorie.parent === categorieId) {
+        res.push(categorie);
+      }
+    });
+    this.taches.forEach((tache) => {
+      if (tache.parent === categorieId) {
+        res.push(tache);
+      }
+    });
+    return res;
+  }
+
+  getCategorieIdByName(categorieNom: string) {
+    const categorieIndexToFind = this.categories.findIndex(
+      (categorieE1) => {
+        if (categorieE1.titre === categorieNom){
+          return true;
+        }
+      }
+    );
+    return categorieIndexToFind;
   }
 
   // ajouterTache(titreTache) {
@@ -120,11 +173,15 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.tachesService.removeTache(tache);
   }
 
+  modifierTache(tache: Tache, newTitre: string, newParent: number) {
+    this.tachesService.modifyTache(tache, newTitre, newParent);
+  }
+
   ngOnDestroy() {
     this.tachesSubscription.unsubscribe();
   }
 
-  modifierTache(tache: Tache) {
 
-  }
 }
+
+
