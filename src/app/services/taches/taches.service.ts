@@ -100,16 +100,16 @@ export class TachesService {
   }
 
   removeTache(tache: Tache) {
-    const quickStartTacheIndexToRemove = this.taches.findIndex(
+    const quickStartTacheIndexToRemove = this.quickStartTaches.findIndex(
       (tacheE1) => {
-        if (tacheE1 === tache){
+        if (tacheE1 === tache) {
           return true;
         }
       }
     );
     const tacheIndexToRemove = this.taches.findIndex(
       (tacheE1) => {
-        if (tacheE1 === tache){
+        if (tacheE1 === tache) {
           return true;
         }
       }

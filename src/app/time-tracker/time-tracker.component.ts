@@ -208,6 +208,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   supprimerTache(tache: Tache) {
+    if (tache.estDemaree) {
+      this.demarerStopperTache(tache);
+    }
     this.tachesService.removeTache(tache);
   }
 
