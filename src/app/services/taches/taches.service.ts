@@ -11,10 +11,12 @@ import DataSnapshot = firebase.database.DataSnapshot;
 export class TachesService {
 
   taches: Tache[] = [];
+  nbTachesQuickStart: number;
   tachesSubject = new Subject<Tache[]>();
 
   constructor() {
     this.getTaches();
+
   }
 
   emitTaches() {

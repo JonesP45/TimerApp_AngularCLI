@@ -21,6 +21,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   dateActive: Date[];
   subsTemps: Subscription[] = [];
   tacheForm: FormGroup;
+  quickStartForm: FormGroup;
 
   constructor(private tachesService: TachesService, private formBuilder: FormBuilder) { }
 
@@ -54,6 +55,16 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   onSaveTache() {
     const titre = this.tacheForm.get('title').value;
+    const temps = 0;
+    const estDemaree = false;
+    const Date1 = new Date();
+    const Date2 = new Date();
+    const newTache = new Tache(titre, temps, estDemaree, Date1, Date2);
+    this.tachesService.createNewTache(newTache);
+  }
+
+  onQuickStart() {
+    const titre = 'Quick Start';
     const temps = 0;
     const estDemaree = false;
     const Date1 = new Date();

@@ -3,12 +3,20 @@
     <h1>Time Tracker</h1>
   </div>
 
+  <div class="jumbotron">
+    <form [formGroup]="quickStartForm" (ngSubmit)="(onSaveTache())">
+      <button class="btn btn-success"
+              type="submit"
+      >Quick start
+      </button>
+    </form>
+  </div>
+
   <div class="input-group mb-3">
     <form [formGroup]="tacheForm" (ngSubmit)="onSaveTache()">
       <div class="form-group">
         <label for="title">Titre</label>
-        <input type="text" id="title"
-               class="form-control" formControlName="title">
+        <input type="text" id="title" class="form-control" placeholder="Nouvelle tache" formControlName="title">
       </div>
       <button class="btn btn-success"
               type="submit">Enregistrer
@@ -29,7 +37,7 @@
       </span>
         {{tache.titre}} {{tempsDynamique(tache, i)}}
       <span (click)="supprimerTache(tache)">
-        <i class="fa fa-minus-circle"></i>
+        <i class="fa fa-remove"></i>
       </span>
 <!--      {{tache.titre}} {{tache.temps}}-->
     </li>
