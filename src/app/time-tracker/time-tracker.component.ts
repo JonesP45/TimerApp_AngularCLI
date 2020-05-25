@@ -30,7 +30,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   // idTache: number;
   compteurTache: number[]; // Pour faire defiler le temps qui passe pour chaque taches
   subsTempsTache: Subscription[] = []; // L'observateur pour actualiser le compteur d'une tache
-  // dateActive: Date[];
+  dateActive: Date[];
   saveForm: FormGroup; // Formulaire pour enregister une tache ou une categorie
 
   /**
@@ -62,6 +62,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.initFormSave();
     this.initFormEdited();
 
+    this.dateActive = [];
     // Initialise toutes les categories fermee (on ne voit pas les taches qui leurs sont associées)
     this.categories.forEach(() => {
       this.showChildren.push(false);
@@ -151,10 +152,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = this.saveForm.get('title').value;
     const temps = 0;
     const estDemaree = false;
-    // const date1 = new Date();
-    // const date2 = new Date();
+    const dates = [];
     const parent = this.getCategorieIdByName(this.saveForm.get('parent').value);
-    const newTache = new Tache(titre, temps, estDemaree, /*date1, date2, */parent);
+    const newTache = new Tache(titre, temps, estDemaree, dates, parent);
     this.tachesService.createNewTache(newTache);
   }
 
@@ -162,13 +162,12 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
    * Permet a l'utilisateur de creer une quick task
    */
   onQuickStart() {
-    const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
+    const titre = 'Quick Start ';
     const temps = 0;
     const estDemaree = false;
-    // const Date1 = new Date();
-    // const Date2 = new Date();
+    const dates = [];
     const parent = -1; // Pas de categorie (uniquement present dans All tasks)
-    const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
+    const newTache = new Tache(titre, temps, estDemaree, dates, parent);
     this.tachesService.createNewQuickStartTache(newTache);
     this.demarerStopperTache(this.taches[this.taches.length - 1]);
   }
@@ -387,6 +386,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       // tache.date2 = maintenant;
       // this.dateActive[indice] = null;
     }
+    console.log(this.taches);
   }
 
   /**
@@ -395,6 +395,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
    */
   demarerTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
+    this.dateActive[indice] = new Date();
     this.subsTempsTache[indice] = interval(1000).subscribe((valeur: number) => (this.compteurTache[indice] = valeur));
   }
 
@@ -404,6 +405,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
    */
   stopperTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
+    tache.dates.push([this.dateActive[indice].toDateString(), new Date().toDateString()]);
     tache.temps += this.compteurTache[indice];
     this.categories[this.getCategorieIdByName('All tasks')].temps += this.compteurTache[indice];
     this.categorieService.updateTemps(this.categories[this.getCategorieIdByName('All tasks')]);
