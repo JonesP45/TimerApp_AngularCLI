@@ -171,7 +171,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   onEdit(tache: Tache) {
-    this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value, this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
+      this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
     this.edited = false;
   }
 
