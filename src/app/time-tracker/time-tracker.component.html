@@ -108,14 +108,14 @@
 
 
 
-    <li class="list-group-item" *ngFor="let categorie of categories; let i = index">
+    <li class="list-group-item" *ngFor="let categorie of categories; let i = index" (click)="showTacheOfCategorie(i)">
 
       {{categorie.titre}} {{tempsCategorie(categorie)}}
       <span (click)="supprimerCategorie(categorie)" *ngIf="i > 1">
         <i class="fa fa-remove"></i>
       </span>
 
-      <ul>
+      <ul *ngIf="showChildren[i]">
         <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let j = index">
 
           <span>
