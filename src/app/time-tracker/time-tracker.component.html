@@ -48,25 +48,64 @@
     <!--    </div>-->
   </div>
 
+  <div *ngIf="edited" class="input-group">
+    <form [formGroup]="editForm" (ngSubmit)="onEdit(editTache)">
+      <div class="form-row">
+
+        <div class="form-group col">
+          <label for="nveauTitre">Nouveau titre</label>
+          <input type="text" id="nveauTitre" class="form-control" placeholder="Nouveau titre" formControlName="nveauTitre">
+        </div>
+
+        <div class="form-group col">
+          <label for="nvelleCate">Déplacer dans la catégorie: </label>
+          <select class="form-control" name="parent" id="nvelleCate" formControlName="nvelleCate">
+            <option *ngFor="let categorie of categories" value="{{categorie.titre}}">
+              {{categorie.titre}}
+            </option>
+          </select>
+        </div>
+
+        <!--                <div class="form-group col">-->
+        <!--                  <label for="'nveauTitre' + j">Nouveau titre</label>-->
+        <!--                  <input type="text" id="'nveauTitre' + j" class="form-control" placeholder="Nouveau titre" formControlName="'nveauTitre' + j">-->
+        <!--                </div>-->
+
+        <!--                <div class="form-group col">-->
+        <!--                  <label for="'nvelleCate' + j">Déplacer dans la catégorie: </label>-->
+        <!--                  <select class="form-control" name="parent" id="'nvelleCate' + j" formControlName="'nvelleCate' + j">-->
+        <!--                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">-->
+        <!--                      {{categorie.titre}}-->
+        <!--                    </option>-->
+        <!--                  </select>-->
+        <!--                </div>-->
+      </div>
+
+      <button [disabled]="editForm.invalid" class="btn btn-success"
+              type="submit">Modifier
+      </button>
+    </form>
+  </div>
+
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let categorie of categories; let i = index">
       <span (click)="demarerStopperCategorie(categorie)">
         <i class="fa fa-lg" [ngClass]="categorie.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
       </span>
       {{categorie.titre}} {{tempsDynamiqueCategorie(categorie, i)}}
-      <span (click)="supprimerCategorie(categorie)" *ngIf="i>1">
+      <span (click)="supprimerCategorie(categorie)" *ngIf="i > 1">
         <i class="fa fa-remove"></i>
       </span>
 
       <ul>
-        <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let i = index">
+        <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let j = index">
 
           <span>
             <span (click)="demarerStopperTache(tache)">
               <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
             </span>
 
-            {{tache.titre}} {{tempsDynamiqueTache(tache, i)}}
+            {{tache.titre}} {{tempsDynamiqueTache(tache, j)}}
 
             <span (click)="modifierTache(tache)">
               <i class="fa fa-edit"></i>
@@ -77,26 +116,66 @@
             </span>
           </span>
 
+
+<!--          <div *ngIf="edited[i][j]" class="input-group">-->
+<!--            <form [formGroup]="editForm[i][j]" (ngSubmit)="onEdit(tache, i, j)">-->
+<!--              <div class="form-row">-->
+
+<!--                <div class="form-group col">-->
+<!--                  <label for="nveauTitre">Nouveau titre</label>-->
+<!--                  <input type="text" id="nveauTitre" class="form-control" placeholder="Nouveau titre" formControlName="nveauTitre">-->
+<!--                </div>-->
+
+<!--                <div class="form-group col">-->
+<!--                  <label for="nvelleCate">Déplacer dans la catégorie: </label>-->
+<!--                  <select class="form-control" name="parent" id="nvelleCate" formControlName="nvelleCate">-->
+<!--                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">-->
+<!--                      {{categorie.titre}}-->
+<!--                    </option>-->
+<!--                  </select>-->
+<!--                </div>-->
+
+<!--&lt;!&ndash;                <div class="form-group col">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <label for="'nveauTitre' + j">Nouveau titre</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <input type="text" id="'nveauTitre' + j" class="form-control" placeholder="Nouveau titre" formControlName="'nveauTitre' + j">&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                <div class="form-group col">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <label for="'nvelleCate' + j">Déplacer dans la catégorie: </label>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <select class="form-control" name="parent" id="'nvelleCate' + j" formControlName="'nvelleCate' + j">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">&ndash;&gt;-->
+<!--&lt;!&ndash;                      {{categorie.titre}}&ndash;&gt;-->
+<!--&lt;!&ndash;                    </option>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </select>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--              </div>-->
+
+<!--              <button [disabled]="editForm[i][j].invalid" class="btn btn-success"-->
+<!--                      type="submit">Modifier-->
+<!--              </button>-->
+<!--            </form>-->
+<!--          </div>-->
+
         </li>
       </ul>
 
     </li>
 
-    <li class="list-group-item" *ngFor="let tache of getTacheWithoutParent(); let i = index">
-        <span (click)="demarerStopperTache(tache)">
-          <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
-        </span>
+<!--    <li class="list-group-item" *ngFor="let tache of getTacheWithoutParent(); let i = index">-->
+<!--        <span (click)="demarerStopperTache(tache)">-->
+<!--          <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--        </span>-->
 
-      {{tache.titre}} {{tempsDynamiqueTache(tache, i)}}
+<!--      {{tache.titre}} {{tempsDynamiqueTache(tache, i)}}-->
 
-      <span (click)="modifierTache(tache)">
-          <i class="fa fa-edit"></i>
-        </span>
+<!--      <span (click)="modifierTache(tache)">-->
+<!--          <i class="fa fa-edit"></i>-->
+<!--        </span>-->
 
-      <span (click)="supprimerTache(tache)">
-          <i class="fa fa-remove"></i>
-        </span>
-    </li>
+<!--      <span (click)="supprimerTache(tache)">-->
+<!--          <i class="fa fa-remove"></i>-->
+<!--        </span>-->
+<!--    </li>-->
 
     <!--    <li class="list-group-item" *ngFor="let tache of taches; let i = index">-->
     <!--      <span (click)="demarerStopperTache(tache)">-->

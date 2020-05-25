@@ -5,7 +5,7 @@ import {TachesService} from '../services/taches/taches.service';
 import {CategorieService} from '../services/categories/categorie.service';
 // import {StockageLocalService} from '../services/stockage-local/stockage-local.service';
 import {interval, Subscription} from 'rxjs';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 
 @Component({
@@ -15,6 +15,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
   ]
 })
 export class TimeTrackerComponent implements OnInit, OnDestroy {
+
+  edited = false;
+  editForm: FormGroup;
+  editTache: Tache = null;
 
   categories: Categorie[];
   taches: Tache[];
@@ -46,32 +50,73 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       }
     );
     this.tachesService.emitTaches();
-    this.initForm();
-    // this.taches = this.stockageLocalService.recupererTaches();
-    // this.idTache = this.taches.length;
-    // this.idTache = 0;
-    this.compteurTache = [];
-    this.taches.forEach(() => {
-      this.subsTempsTache.push(new Subscription());
+    this.initFormSave();
+    this.initFormEdited();
+
+    /*this.compteurCategorie = [];
+    this.categorieService.categories.forEach(() => {
+      this.subsTempsCategorie.push(new Subscription());
+      // this.edited.push([false]);
     });
+
+    this.compteurTache = [];
+    this.tachesService.taches.forEach(() => {
+      this.subsTempsTache.push(new Subscription());
+      // this.edited.push(false);
+      // this.editForm.push(this.formBuilder.group({
+      //   nveauTitre: [''],
+      //   nvelleCate: ['']
+      // }));
+    });*/
+
     this.compteurCategorie = [];
     this.categories.forEach(() => {
       this.subsTempsCategorie.push(new Subscription());
+      // this.edited.push([false]);
     });
-    // this.dateActive = [];
-    // this.taches.forEach((tache: Tache) => {
-    //   if (tache.estDemaree) {
-    //     this.demarerStopperTache(tache);
-    //   }
-    // });
+
+    this.compteurTache = [];
+    this.taches.forEach(() => {
+      this.subsTempsTache.push(new Subscription());
+      // this.edited.push(false);
+      // this.editForm.push(this.formBuilder.group({
+      //   nveauTitre: [''],
+      //   nvelleCate: ['']
+      // }));
+    });
   }
 
-  initForm() {
+  initFormSave() {
     this.saveForm = this.formBuilder.group({
       type: ['', Validators.required],
       title: ['', Validators.required],
       parent: [''/*, Validators.required*/]
     });
+  }
+
+  initFormEdited() {
+    this.editForm = this.formBuilder.group({
+      nveauTitre: [''],
+      nvelleCate: ['']
+    });
+    /*this.categories.forEach((categorie: Categorie) => {
+      const tmp = [];
+      console.log(this.getCategorieChildren(this.getCategorieIdByName(categorie.titre)).length);
+      this.getCategorieChildren(this.getCategorieIdByName(categorie.titre)).forEach(() => {
+        tmp.push(false);
+      });
+      this.edited.push(tmp);
+    });
+    this.categories.forEach(() => {
+      const tmp = [];
+      this.taches.forEach(() => {
+        tmp.push(this.formBuilder.group({
+          nveauTitre: [''],
+          nvelleCate: ['']
+        }));
+      });
+      this.editForm.push(tmp);
+    });*/
   }
 
   onSave() {
@@ -96,7 +141,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   onQuickStart() {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
-    const estDemaree = true;
+    const estDemaree = false;
     // const Date1 = new Date();
     // const Date2 = new Date();
     const parent = 1; // id single tasks
@@ -123,6 +168,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     } else {
       console.log('error');
     }
+  }
+
+  onEdit(tache: Tache) {
+    this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value, this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    this.edited = false;
   }
 
   // getAllChildrenByCategorieId(categorieId: number, res: Map<object, any>) {
@@ -169,15 +219,15 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     return categorieIndexToFind;
   }
 
-  getTacheWithoutParent() {
-    const res = [];
-    this.taches.forEach((tache) => {
-      if (tache.parent === -1) {
-        res.push(tache);
-      }
-    });
-    return res;
-  }
+  // getTacheWithoutParent() {
+  //   const res = [];
+  //   this.taches.forEach((tache) => {
+  //     if (tache.parent === -1) {
+  //       res.push(tache);
+  //     }
+  //   });
+  //   return res;
+  // }
 
   // ajouterTache(titreTache) {
   //   // let nouvelleTache = {
@@ -196,6 +246,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   // }
 
   demarerStopperTache(tache: Tache) {
+    // console.log(this.taches.length);
+    // console.log(this.editForm.length);
     // const indice = this.taches.indexOf(tache);
     tache.estDemaree = !tache.estDemaree;
     if (tache.estDemaree) {
@@ -289,6 +341,13 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   modifierTache(tache: Tache) {
+    // this.initFormEdited();
+    this.editTache = tache;
+    this.editForm = this.formBuilder.group({
+      nveauTitre: [tache.titre, Validators.required],
+      nvelleCate: [this.categories[tache.parent].titre, Validators.required]
+    });
+    this.edited = true;
   }
 
   ngOnDestroy() {
