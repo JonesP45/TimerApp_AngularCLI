@@ -53,11 +53,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       this.subsTemps.push(new Subscription());
     });
     // this.dateActive = [];
-    // this.taches.forEach((tache: Tache) => {
-    //   if (tache.estDemaree) {
-    //     this.demarerStopperTache(tache);
-    //   }
-    // });
   }
 
   initForm() {
@@ -95,7 +90,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = true;
     // const Date1 = new Date();
     // const Date2 = new Date();
-    const parent = -1;
+    const parent = 1;
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
     this.tachesService.createNewQuickStartTache(newTache);
   }
@@ -104,7 +99,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const titre = this.saveForm.get('title').value;
     const temps = 0;
     const parent = this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
-    const newCategorie = new Categorie(titre, temps, parent);
+    const newCategorie = new Categorie(titre, temps, parent, false);
     this.categorieService.createNewCategorie(newCategorie);
   }
 
@@ -130,11 +125,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   getCategorieChildren(categorieId: number) {
     const res = [];
-    this.categories.forEach((categorie) => {
-      if (categorie.parent === categorieId) {
-        res.push(categorie);
-      }
-    });
+    if (categorieId === 0) {
+      return this.taches;
+    }
     this.taches.forEach((tache) => {
       if (tache.parent === categorieId) {
         res.push(tache);

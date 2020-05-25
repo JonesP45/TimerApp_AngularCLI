@@ -12,7 +12,6 @@
   <div class="input-group mb-3">
     <form [formGroup]="saveForm" (ngSubmit)="onSave()">
       <div class="form-row">
-
         <div class="form-group col">
           <label for="type">Ajouter </label>
           <select class="form-control" name="type" id="type" formControlName="type" #t>
@@ -21,10 +20,9 @@
           </select>
         </div>
 
-        <div class="form-group col">
+        <div class="form-group col" *ngIf="t.value !== 'categorie'">
           <label for="parent"> à </label>
           <select class="form-control" name="parent" id="parent" formControlName="parent">
-            <option value="-1">Aucun</option>
             <option *ngFor="let categorie of categories; let i = index" value="{{categorie.titre}}">
               {{categorie.titre}}
             </option>
