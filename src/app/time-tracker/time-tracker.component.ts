@@ -211,6 +211,16 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     return categorieIndexToFind;
   }
 
+  getTachesDemaree() {
+    const res = [];
+    this.taches.forEach((tache) => {
+      if (tache.estDemaree) {
+        res.push(tache);
+      }
+    });
+    return res;
+  }
+
   // getTacheWithoutParent() {
   //   const res = [];
   //   this.taches.forEach((tache) => {
@@ -303,7 +313,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  tempsDynamiqueTache(tache: Tache, i: number) {
+  tempsDynamiqueTache(tache: Tache/*, i: number*/) {
+    const i = this.taches.indexOf(tache);
     const date = new Date(0);
     date.setSeconds(this.compteurTache[i] ? tache.temps + this.compteurTache[i] : tache.temps); // specify value for SECONDS here
     return date.toISOString().substr(11, 8);
