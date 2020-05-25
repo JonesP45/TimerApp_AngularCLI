@@ -88,12 +88,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   initFormEdited() {
     this.editForm = this.formBuilder.group({
-      typeTache: [''],
-      tacheExistante: [''],
       nveauTitre: [''],
-      nvelleCate: [''],
-      nveauTitreQuickStart: [''],
-      nvelleCateQuickStart: ['']
+      nvelleCate: ['']
     });
     /*this.categories.forEach((categorie: Categorie) => {
       const tmp = [];
@@ -121,7 +117,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     } else if (this.saveForm.get('type').value === 'categorie'){
       this.onSaveCategorie();
     }
-    this.initFormSave();
   }
 
   onSaveTache() {
@@ -168,37 +163,14 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   onEdit(tache: Tache) {
-    // if (tache.parent === -1) {
-    //   this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)].temps += tache.temps;
-    //   this.categorieService.updateTemps(this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)]);
-    //   this.tachesService.saveQuickStart(tache, this.editForm.get('nveauTitre').value,
-    //     this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
-    // } else {
-    //   this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
-    //     this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
-    // }
-    // if (this.editForm.get('typeTache').value === 'newTache') {
     if (tache.parent === -1) {
-      if (this.editForm.get('typeTache').value === 'newTache') {
-        this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCateQuickStart').value)].temps += tache.temps;
-        this.categorieService.updateTemps(this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCateQuickStart').value)]);
-        this.tachesService.saveQuickStart(tache, this.editForm.get('nveauTitreQuickStart').value,
-          this.getCategorieIdByName(this.editForm.get('nvelleCateQuickStart').value));
-      } else {
-        this.taches[this.editForm.get('tacheExistante').value].temps += tache.temps;
-        this.tachesService.updateTemps(this.taches[this.editForm.get('tacheExistante').value]);
-
-        this.categories[this.taches[this.editForm.get('tacheExistante').value].parent].temps += tache.temps;
-        this.categorieService.updateTemps(this.categories[this.taches[this.editForm.get('tacheExistante').value].parent]);
-        this.tachesService.removeTache(tache);
-      }
-    } else {
-      this.categories[tache.parent].temps -= tache.temps;
-      this.categorieService.updateTemps(this.categories[tache.parent]);
-      this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
-        this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
       this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)].temps += tache.temps;
       this.categorieService.updateTemps(this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)]);
+      this.tachesService.saveQuickStart(tache, this.editForm.get('nveauTitre').value,
+        this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    } else {
+      this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
+        this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
     }
     this.edited = false;
   }
@@ -272,16 +244,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const res = [];
     this.taches.forEach((tache) => {
       if (tache.parent === -1) {
-        res.push(tache);
-      }
-    });
-    return res;
-  }
-
-  getTachesWithParent() {
-    const res = [];
-    this.taches.forEach((tache) => {
-      if (tache.parent !== -1) {
         res.push(tache);
       }
     });
@@ -425,25 +387,10 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   modifierTache(tache: Tache) {
     // this.initFormEdited();
     this.editTache = tache;
-    if (tache.parent !== -1) {
-      this.editForm = this.formBuilder.group({
-        typeTache: [''],
-        tacheExistante: [''],
-        nveauTitre: [tache.titre, Validators.required],
-        nvelleCate: [tache.parent !== -1 ? this.categories[tache.parent].titre : '', Validators.required],
-        nveauTitreQuickStart: [''],
-        nvelleCateQuickStart: ['']
-      });
-    } else {
-      this.editForm = this.formBuilder.group({
-        typeTache: [''],
-        tacheExistante: [''],
-        nveauTitre: [''],
-        nvelleCate: [''],
-        nveauTitreQuickStart: [tache.titre],
-        nvelleCateQuickStart: [tache.parent !== -1 ? this.categories[tache.parent].titre : '']
-      });
-    }
+    this.editForm = this.formBuilder.group({
+      nveauTitre: [tache.titre, Validators.required],
+      nvelleCate: [tache.parent !== -1 ? this.categories[tache.parent].titre : '', Validators.required]
+    });
     this.edited = true;
   }
 

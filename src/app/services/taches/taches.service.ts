@@ -119,7 +119,7 @@ export class TachesService {
     //     }
     //   }
     // );
-    if (tache.parent === -1 || this.taches[tacheIndexToRemove].parent === -1) {
+    if (this.taches[tacheIndexToRemove].parent === -1) {
       firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
     }
     this.taches.splice(tacheIndexToRemove, 1);
@@ -136,9 +136,9 @@ export class TachesService {
     //   }
     // );
     const tacheIndexToModify = this.taches.indexOf(tache);
-    // console.log(tacheIndexToModify);
-    // console.log(this.taches);
-    // console.log(tache);
+    console.log(tacheIndexToModify);
+    console.log(this.taches);
+    console.log(tache);
     if (this.taches[tacheIndexToModify].parent === -1 && newParent !== -1) {
       firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
     }
