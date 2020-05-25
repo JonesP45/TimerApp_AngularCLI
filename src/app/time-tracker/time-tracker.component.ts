@@ -240,6 +240,20 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Permet de récupérer les quick start
+   * @return Taches[] liste des quick start
+   */
+  getTachesWithoutParent() {
+    const res = [];
+    this.taches.forEach((tache) => {
+      if (tache.parent === -1) {
+        res.push(tache);
+      }
+    });
+    return res;
+  }
+
+  /**
    * Permet d'afficher les taches associees a une categorie
    * @param number indice L'id de la categorie
    */
