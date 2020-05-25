@@ -87,6 +87,7 @@
     </form>
   </div>
 
+
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let tache of getTachesDemaree(); let i = index">
       <span>
@@ -106,6 +107,32 @@
       </span>
     </li>
 
+<!--    <li class="list-group-item" *ngFor="let categorie of categories | slice:1; let i = index" >-->
+<!--      {{categorie.titre}}-->
+
+<!--      <ul *ngIf="showChildren[i]">-->
+<!--        <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let j = index">-->
+
+<!--          <span>-->
+<!--            <span (click)="demarerStopperTache(tache)">-->
+<!--              <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--            </span>-->
+
+<!--            {{tache.titre}} {{tempsDynamiqueTache(tache)}}-->
+
+<!--            <span (click)="modifierTache(tache)">-->
+<!--              <i class="fa fa-edit"></i>-->
+<!--            </span>-->
+
+<!--            <span (click)="supprimerTache(tache)">-->
+<!--              <i class="fa fa-remove"></i>-->
+<!--            </span>-->
+<!--          </span>-->
+<!--        </li>-->
+<!--      </ul>-->
+
+<!--    </li>-->
+
 
 
     <li class="list-group-item" *ngFor="let categorie of categories; let i = index" >
@@ -119,6 +146,41 @@
       </span>
 
       <ul *ngIf="showChildren[i]">
+
+
+
+
+
+<!--        <li class="list-group-item" *ngFor="let categorie of categories | slice:1; let i = index" >-->
+<!--          {{categorie.titre}}-->
+
+<!--          <ul *ngIf="showChildren[i]">-->
+<!--            <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let j = index">-->
+
+<!--          <span>-->
+<!--            <span (click)="demarerStopperTache(tache)">-->
+<!--              <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
+<!--            </span>-->
+
+<!--            {{tache.titre}} {{tempsDynamiqueTache(tache)}}-->
+
+<!--            <span (click)="modifierTache(tache)">-->
+<!--              <i class="fa fa-edit"></i>-->
+<!--            </span>-->
+
+<!--            <span (click)="supprimerTache(tache)">-->
+<!--              <i class="fa fa-remove"></i>-->
+<!--            </span>-->
+<!--          </span>-->
+<!--            </li>-->
+<!--          </ul>-->
+
+<!--        </li>-->
+<!--        -->
+
+
+
+
         <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let j = index">
 
           <span>
