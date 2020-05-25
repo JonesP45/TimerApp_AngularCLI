@@ -11,7 +11,6 @@ import DataSnapshot = firebase.database.DataSnapshot;
 export class TachesService {
 
   taches: Tache[] = []; // liste des taches enregistrees en base
-  // quickStartTaches: Tache[] = [];
   nbQuickStartTaches: number; // le nombre de quick tache en base
   tachesSubject = new Subject<Tache[]>(); // Sujet de taches
 
@@ -30,9 +29,6 @@ export class TachesService {
         this.nbQuickStartTaches = data.val() ? data.val() : 0;
       }
     });
-    // if (reset) {
-    //   firebase.database().ref('/nbQuickStartTaches').set(0);
-    // }
   }
 
   /**
@@ -65,15 +61,6 @@ export class TachesService {
    * @param Tache tache La tache a laquelle on veut actualier son temps
    */
   updateTemps(tache: Tache) {
-    // const quickStartTacheIndexToRemove = this.taches.indexOf(tache);
-    // const quickStartTacheIndexToUpdate = this.taches.findIndex(
-    //   (tacheE1) => {
-    //     if (tacheE1 === tache){
-    //       return true;
-    //     }
-    //   }
-    // );
-    // const tacheIndexToRemove = this.taches.indexOf(tache);
     const tacheIndexToUpdate = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){
@@ -81,28 +68,11 @@ export class TachesService {
         }
       }
     );
-    // if (quickStartTacheIndexToUpdate !== -1) {
-    //   this.quickStartTaches[quickStartTacheIndexToUpdate] = tache;
-    // }
     this.taches[tacheIndexToUpdate] = tache;
     this.saveTache();
     this.emitTaches();
     return tache;
   }
-
-  // getSingleTache(id: number) {
-  //   return new Promise(
-  //     (resolve, reject) => {
-  //       firebase.database().ref('/taches/' + id).once('value').then(
-  //         (data: DataSnapshot) => {
-  //           resolve(data.val());
-  //         }, (error) => {
-  //           reject(error);
-  //         }
-  //       );
-  //     }
-  //   );
-  // }
 
   /**
    * Ajoute une nouvelle tache a la liste des taches
@@ -131,23 +101,7 @@ export class TachesService {
    * @param Tache tache La tache que l'on veut retirer
    */
   removeTache(tache: Tache) {
-    // const quickStartTacheIndexToRemove = this.taches.findIndex(
-    //   (tacheE1) => {
-    //     if (tacheE1 === tache){
-    //       return true;
-    //     }
-    //   }
-    // );
     const tacheIndexToRemove = this.taches.indexOf(tache);
-    // const tacheIndexToRemove = this.taches.findIndex(
-    //   (tacheE1) => {
-    //     console.log(tache);
-    //     console.log(tacheE1);
-    //     if (tacheE1 === tache) {
-    //       return true;
-    //     }
-    //   }
-    // );
     // Si l'on retire une quick task alors on met a jour le compteur
     if (tache.parent === -1 || this.taches[tacheIndexToRemove].parent === -1) {
       firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
@@ -164,13 +118,6 @@ export class TachesService {
    * @param number newParent L'id de la nouvelle categorie de la tache
    */
   modifyTache(tache: Tache, newTitre: string, newParent: number) {
-    // const tacheIndexToModify = this.taches.findIndex(
-    //   (tacheE1) => {
-    //     if (tacheE1 === tache) {
-    //       return true;
-    //     }
-    //   }
-    // );
     const tacheIndexToModify = this.taches.indexOf(tache);
     // Si l'on modifie une quick task alors ce n'en est plus une
     if (this.taches[tacheIndexToModify].parent === -1 && newParent !== -1) {

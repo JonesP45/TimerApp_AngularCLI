@@ -7,7 +7,6 @@ export class Tache {
    * @param number  parent     La categorie contenant cette categorie (-1 = pas de parent)
    */
   constructor(public titre: string, public temps: number, public estDemaree: boolean,
-              /*public date1: Date, public date2: Date,*/ public parent: number) {}
+              public parent: number) {}
 }
 
-type CouplesDates = [Date, Date];
