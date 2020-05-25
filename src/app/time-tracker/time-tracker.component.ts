@@ -16,8 +16,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class TimeTrackerComponent implements OnInit, OnDestroy {
 
-  editedQuickStart: boolean[] = [];
-
   categories: Categorie[];
   taches: Tache[];
   categoriesSubscription: Subscription;
@@ -28,7 +26,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   // dateActive: Date[];
   subsTemps: Subscription[] = [];
   saveForm: FormGroup;
-  editForm: FormGroup;
   tree: Map<object, any>;
 
   constructor(private tachesService: TachesService, private formBuilder: FormBuilder, private categorieService: CategorieService) {
@@ -54,7 +51,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.compteur = [];
     this.taches.forEach(() => {
       this.subsTemps.push(new Subscription());
-      this.editedQuickStart.push(false);
     });
     // this.dateActive = [];
     // this.taches.forEach((tache: Tache) => {
@@ -96,23 +92,12 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   onQuickStart() {
     const titre = 'Quick Start '/* + ++this.nbQuickStartTaches*/;
     const temps = 0;
-    const estDemaree = false;
+    const estDemaree = true;
     // const Date1 = new Date();
     // const Date2 = new Date();
     const parent = -1;
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
     this.tachesService.createNewQuickStartTache(newTache);
-    this.tachesService.emitTaches();
-    this.taches.forEach((tache) => {
-      if (tache === newTache) {
-        this.demarerStopperTache(tache);
-      }
-    });
-  }
-
-  onEditQuickStart(tache: Tache, i: number) {
-    this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value, this.editForm.get('nvelleCate').value);
-    this.editedQuickStart[i] = false;
   }
 
   onSaveCategorie() {
@@ -223,14 +208,10 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   supprimerTache(tache: Tache) {
-    if (tache.estDemaree) {
-      this.demarerStopperTache(tache);
-    }
     this.tachesService.removeTache(tache);
   }
 
-  modifierQuickStartTache(i: number) {
-    this.editedQuickStart[i] = true;
+  modifierTache(tache: Tache) {
   }
 
   ngOnDestroy() {
