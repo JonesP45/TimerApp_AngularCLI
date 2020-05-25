@@ -163,8 +163,15 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   onEdit(tache: Tache) {
-    this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
-      this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    if (tache.parent === -1) {
+      this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)].temps += tache.temps;
+      this.categorieService.updateTemps(this.categories[this.getCategorieIdByName(this.editForm.get('nvelleCate').value)]);
+      this.tachesService.saveQuickStart(tache, this.editForm.get('nveauTitre').value,
+        this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    } else {
+      this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
+        this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+    }
     this.edited = false;
   }
 
@@ -275,7 +282,17 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       // tache.temps += this.compteur[indice];
       // this.compteur[indice] = 0;
       // this.subsTemps[indice].unsubscribe();
-      this.tachesService.updateTemps(tache);
+
+
+      // if (tache.parent === -1) {
+      //   this.tachesService.saveQuickStart(tache, );
+      // } else {
+      // }
+      if (tache.parent === -1) {
+        this.modifierTache(tache);
+      } else {
+        this.tachesService.updateTemps(tache);
+      }
 
       // const maintenant = new Date();
       // tache.date1 = this.dateActive[indice];
@@ -298,13 +315,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       this.categories[tache.parent].temps += this.compteurTache[indice];
       this.categorieService.updateTemps(this.categories[tache.parent]);
     }
-    // console.log(indice);
-    // console.log(tache);
-    // console.log(this.taches);
-    // console.log(this.subsTempsTache);
     this.compteurTache[indice] = 0;
     this.subsTempsTache[indice].unsubscribe();
-    // this.tachesService.updateTemps(tache);
   }
 
   // demarerStopperCategorie(categorie: Categorie) {
@@ -350,9 +362,15 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     }
     if (tache.parent !== -1) {
       this.categories[tache.parent].temps -= tache.temps;
+      if (this.categories[tache.parent].temps < 0) {
+        this.categories[tache.parent].temps = 0;
+      }
       this.categorieService.updateTemps(this.categories[tache.parent]);
     }
     this.categories[this.getCategorieIdByName('All tasks')].temps -= tache.temps;
+    if (this.categories[this.getCategorieIdByName('All tasks')].temps < 0) {
+      this.categories[this.getCategorieIdByName('All tasks')].temps = 0;
+    }
     this.categorieService.updateTemps(this.categories[this.getCategorieIdByName('All tasks')]);
     this.tachesService.removeTache(tache);
   }
@@ -371,7 +389,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.editTache = tache;
     this.editForm = this.formBuilder.group({
       nveauTitre: [tache.titre, Validators.required],
-      nvelleCate: [this.categories[tache.parent].titre, Validators.required]
+      nvelleCate: [tache.parent !== -1 ? this.categories[tache.parent].titre : '', Validators.required]
     });
     this.edited = true;
   }

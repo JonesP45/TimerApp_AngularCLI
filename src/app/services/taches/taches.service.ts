@@ -70,6 +70,7 @@ export class TachesService {
     this.taches[tacheIndexToUpdate] = tache;
     this.saveTache();
     this.emitTaches();
+    return tache;
   }
 
   // getSingleTache(id: number) {
@@ -118,8 +119,6 @@ export class TachesService {
     //     }
     //   }
     // );
-    console.log(this.taches);
-    console.log(tacheIndexToRemove);
     if (this.taches[tacheIndexToRemove].parent === -1) {
       firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
     }
@@ -129,19 +128,41 @@ export class TachesService {
   }
 
   modifyTache(tache: Tache, newTitre: string, newParent: number) {
-    const tacheIndexToModify = this.taches.findIndex(
-      (tacheE1) => {
-        if (tacheE1 === tache) {
-          return true;
-        }
-      }
-    );
+    // const tacheIndexToModify = this.taches.findIndex(
+    //   (tacheE1) => {
+    //     if (tacheE1 === tache) {
+    //       return true;
+    //     }
+    //   }
+    // );
+    const tacheIndexToModify = this.taches.indexOf(tache);
+    console.log(tacheIndexToModify);
+    console.log(this.taches);
+    console.log(tache);
     if (this.taches[tacheIndexToModify].parent === -1 && newParent !== -1) {
       firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
     }
 
     this.taches[tacheIndexToModify].titre = newTitre;
     this.taches[tacheIndexToModify].parent = newParent;
+    this.saveTache();
+    this.emitTaches();
+  }
+
+  saveQuickStart(tache: Tache, newTitre: string, newParent: number) {
+    const tacheIndexToSaveSuickStart = this.taches.findIndex(
+      (tacheE1) => {
+        if (tacheE1 === tache){
+          return true;
+        }
+      }
+    );
+    if (this.taches[tacheIndexToSaveSuickStart].parent === -1 && newParent !== -1) {
+      firebase.database().ref('/nbQuickStartTaches').set(--this.nbQuickStartTaches);
+    }
+    this.taches[tacheIndexToSaveSuickStart] = tache;
+    this.taches[tacheIndexToSaveSuickStart].titre = newTitre;
+    this.taches[tacheIndexToSaveSuickStart].parent = newParent;
     this.saveTache();
     this.emitTaches();
   }
