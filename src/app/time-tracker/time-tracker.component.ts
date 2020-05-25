@@ -292,6 +292,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const indice = this.taches.indexOf(tache);
     tache.temps += this.compteurTache[indice];
     this.categories[tache.parent].temps += this.compteurTache[indice];
+    this.categories[this.getCategorieIdByName('All tasks')].temps += this.compteurTache[indice];
+    this.categorieService.updateTemps(this.categories[this.getCategorieIdByName('All tasks')]);
     this.categorieService.updateTemps(this.categories[tache.parent]);
     // console.log(indice);
     // console.log(tache);
