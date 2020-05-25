@@ -3,12 +3,15 @@
     <h1>Time Tracker</h1>
   </div>
 
+  <!-- Debut Quick task -->
   <div class="jumbotron">
     <button class="btn btn-success"
             type="submit" (click)="onQuickStart()">Quick start
     </button>
   </div>
+  <!--  Fin Quick task -->
 
+  <!--  Debut formulaire pour creer une tache/categorie -->
   <div class="input-group mb-3">
     <form [formGroup]="saveForm" (ngSubmit)="onSave()">
       <div class="form-row">
@@ -41,7 +44,9 @@
       </button>
     </form>
   </div>
+  <!--  Fin formulaire pour creer une tache/categorie -->
 
+  <!--  Debut formulaire pour modifier une tache -->
   <div *ngIf="edited" class="input-group">
     <form [formGroup]="editForm" (ngSubmit)="onEdit(editTache)">
       <div class="form-row">
@@ -58,9 +63,6 @@
           <div class="form-group col" *ngIf="tt.value === 'tache'">
             <label for="tacheExistante"> à </label>
             <select class="form-control" name="tacheExistante" id="tacheExistante" formControlName="tacheExistante">
-<!--              <option *ngFor="let tache of getTachesWithParent(); let i = index" value="{{tache}}">-->
-<!--                {{tache.titre}} de {{categories[tache.parent].titre}}-->
-<!--              </option>-->
               <option *ngFor="let tache of taches; let i = index" value="{{i}}">
                 {{tache.titre}}<!-- de {{categories[tache.parent].titre}}-->
               </option>
@@ -98,56 +100,16 @@
 
       </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <!--                <div class="form-group col">-->
-      <!--                  <label for="'nveauTitre' + j">Nouveau titre</label>-->
-      <!--                  <input type="text" id="'nveauTitre' + j" class="form-control" placeholder="Nouveau titre" formControlName="'nveauTitre' + j">-->
-      <!--                </div>-->
-
-      <!--                <div class="form-group col">-->
-      <!--                  <label for="'nvelleCate' + j">Déplacer dans la catégorie: </label>-->
-      <!--                  <select class="form-control" name="parent" id="'nvelleCate' + j" formControlName="'nvelleCate' + j">-->
-      <!--                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">-->
-      <!--                      {{categorie.titre}}-->
-      <!--                    </option>-->
-      <!--                  </select>-->
-      <!--                </div>-->
-      <!--      </div>-->
-
       <button [disabled]="editForm.invalid" class="btn btn-success"
               type="submit">Modifier
       </button>
     </form>
   </div>
+  <!--  Fin formulaire pour modifier une tache -->
 
+  <!--  Debut liste des taches -->
   <ul class="list-group">
+    <!--  Debut liste des taches lancees -->
     <li class="list-group-item" *ngFor="let tache of getTachesDemaree(); let i = index">
       <span>
         <span (click)="demarerStopperTache(tache)">
@@ -156,16 +118,14 @@
 
         {{tache.titre}} {{tempsDynamiqueTache(tache)}}
 
-        <!--        <span (click)="modifierTache(tache)">-->
-        <!--          <i class="fa fa-edit"></i>-->
-        <!--        </span>-->
-
         <span (click)="supprimerTache(tache)">
           <i class="fa fa-remove"></i>
         </span>
       </span>
     </li>
+    <!--  Fin de la liste des taches lancees -->
 
+    <!--  Debut de la liste des taches classees par categorie -->
     <li class="list-group-item" *ngFor="let categorie of categories; let i = index" >
 
       <span (click)="showTacheOfCategorie(i)">
@@ -176,6 +136,7 @@
         <i class="fa fa-remove"></i>
       </span>
 
+      <!--  Debut liste des taches d'une categorie -->
       <ul *ngIf="showChildren[i] && i == 0">
         <li class="list-group-item" *ngFor="let categorie of categories | slice : 1; let j = index" >
           {{categorie.titre}}
@@ -200,6 +161,7 @@
           </ul>
         </li>
       </ul>
+      <!--  Fin de la liste des taches d'une categorie -->
 
       <ul *ngIf="showChildren[i] && i > 0">
 
@@ -221,79 +183,12 @@
             </span>
           </span>
 
-
-          <!--          <div *ngIf="edited[i][j]" class="input-group">-->
-          <!--            <form [formGroup]="editForm[i][j]" (ngSubmit)="onEdit(tache, i, j)">-->
-          <!--              <div class="form-row">-->
-
-          <!--                <div class="form-group col">-->
-          <!--                  <label for="nveauTitre">Nouveau titre</label>-->
-          <!--                  <input type="text" id="nveauTitre" class="form-control" placeholder="Nouveau titre" formControlName="nveauTitre">-->
-          <!--                </div>-->
-
-          <!--                <div class="form-group col">-->
-          <!--                  <label for="nvelleCate">Déplacer dans la catégorie: </label>-->
-          <!--                  <select class="form-control" name="parent" id="nvelleCate" formControlName="nvelleCate">-->
-          <!--                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">-->
-          <!--                      {{categorie.titre}}-->
-          <!--                    </option>-->
-          <!--                  </select>-->
-          <!--                </div>-->
-
-          <!--&lt;!&ndash;                <div class="form-group col">&ndash;&gt;-->
-          <!--&lt;!&ndash;                  <label for="'nveauTitre' + j">Nouveau titre</label>&ndash;&gt;-->
-          <!--&lt;!&ndash;                  <input type="text" id="'nveauTitre' + j" class="form-control" placeholder="Nouveau titre" formControlName="'nveauTitre' + j">&ndash;&gt;-->
-          <!--&lt;!&ndash;                </div>&ndash;&gt;-->
-
-          <!--&lt;!&ndash;                <div class="form-group col">&ndash;&gt;-->
-          <!--&lt;!&ndash;                  <label for="'nvelleCate' + j">Déplacer dans la catégorie: </label>&ndash;&gt;-->
-          <!--&lt;!&ndash;                  <select class="form-control" name="parent" id="'nvelleCate' + j" formControlName="'nvelleCate' + j">&ndash;&gt;-->
-          <!--&lt;!&ndash;                    <option *ngFor="let categorie of categories" value="{{categorie.titre}}">&ndash;&gt;-->
-          <!--&lt;!&ndash;                      {{categorie.titre}}&ndash;&gt;-->
-          <!--&lt;!&ndash;                    </option>&ndash;&gt;-->
-          <!--&lt;!&ndash;                  </select>&ndash;&gt;-->
-          <!--&lt;!&ndash;                </div>&ndash;&gt;-->
-          <!--              </div>-->
-
-          <!--              <button [disabled]="editForm[i][j].invalid" class="btn btn-success"-->
-          <!--                      type="submit">Modifier-->
-          <!--              </button>-->
-          <!--            </form>-->
-          <!--          </div>-->
-
         </li>
       </ul>
 
     </li>
+    <!--  Fin de la liste des taches classees par categorie -->
 
-    <!--    <li class="list-group-item" *ngFor="let tache of getTacheWithoutParent(); let i = index">-->
-    <!--        <span (click)="demarerStopperTache(tache)">-->
-    <!--          <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
-    <!--        </span>-->
-
-    <!--      {{tache.titre}} {{tempsDynamiqueTache(tache, i)}}-->
-
-    <!--      <span (click)="modifierTache(tache)">-->
-    <!--          <i class="fa fa-edit"></i>-->
-    <!--        </span>-->
-
-    <!--      <span (click)="supprimerTache(tache)">-->
-    <!--          <i class="fa fa-remove"></i>-->
-    <!--        </span>-->
-    <!--    </li>-->
-
-    <!--    <li class="list-group-item" *ngFor="let tache of taches; let i = index">-->
-    <!--      <span (click)="demarerStopperTache(tache)">-->
-    <!--        <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>-->
-    <!--      </span>-->
-    <!--        {{tache.titre}} {{tempsDynamique(tache, i)}}-->
-    <!--      <span (click)="modifierTache(tache)">-->
-    <!--        <i class="fa fa-edit"></i>-->
-    <!--      </span>-->
-    <!--      <span (click)="supprimerTache(tache)">-->
-    <!--        <i class="fa fa-remove"></i>-->
-    <!--      </span>-->
-    <!--    </li>-->
   </ul>
 
 </div>
