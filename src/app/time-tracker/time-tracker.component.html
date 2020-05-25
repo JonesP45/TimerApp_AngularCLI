@@ -23,9 +23,9 @@
 
         <div class="form-group col" *ngIf="t.value !== 'categorie'">
           <label for="parent"> à </label>
-          <select class="form-control" name="parent" id="parent" formControlName="parent">
-            <option *ngFor="let categorie of categories; let i = index" value="{{categorie.titre}}">
-              {{categorie.titre}}
+          <select class="form-control" name="parent" id="parent" formControlName="parent"> <!--[value]="'Single tasks'"-->
+            <option *ngFor="let categorie of categories | slice:1; let i = index" value="{{categorie.titre}}">
+                {{categorie.titre}}
             </option>
           </select>
         </div>
@@ -54,14 +54,14 @@
         <i class="fa fa-lg" [ngClass]="categorie.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
       </span>
       {{categorie.titre}} {{tempsDynamiqueCategorie(categorie, i)}}
-      <span (click)="supprimerCategorie(categorie)">
+      <span (click)="supprimerCategorie(categorie)" *ngIf="i>1">
         <i class="fa fa-remove"></i>
       </span>
 
       <ul>
         <li class="list-group-item" *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre)); let i = index">
 
-          <span *ngIf="tache.parent === getCategorieIdByName(categorie.titre)">
+          <span>
             <span (click)="demarerStopperTache(tache)">
               <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
             </span>

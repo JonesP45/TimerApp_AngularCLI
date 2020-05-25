@@ -70,7 +70,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.saveForm = this.formBuilder.group({
       type: ['', Validators.required],
       title: ['', Validators.required],
-      parent: ['', Validators.required]
+      parent: [''/*, Validators.required*/]
     });
   }
 
@@ -99,19 +99,30 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = true;
     // const Date1 = new Date();
     // const Date2 = new Date();
-    const parent = 0; // id single tasks
+    const parent = 1; // id single tasks
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
     this.tachesService.createNewQuickStartTache(newTache);
   }
 
   onSaveCategorie() {
     const titre = this.saveForm.get('title').value;
-    const temps = 0;
-    const parent = -1;
-      // this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
-    const estDemaree = false;
-    const newCategorie = new Categorie(titre, temps, parent, estDemaree);
-    this.categorieService.createNewCategorie(newCategorie);
+    const categorieIndexToFind = this.categories.findIndex(
+      (categorieE1) => {
+        if (categorieE1.titre === titre){
+          return true;
+        }
+      }
+    );
+    if (categorieIndexToFind === -1) {
+      const temps = 0;
+      const parent = -1;
+        // this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
+      const estDemaree = false;
+      const newCategorie = new Categorie(titre, temps, parent, estDemaree);
+      this.categorieService.createNewCategorie(newCategorie);
+    } else {
+      console.log('error');
+    }
   }
 
   // getAllChildrenByCategorieId(categorieId: number, res: Map<object, any>) {
@@ -136,11 +147,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   getCategorieChildren(categorieId: number) {
     const res = [];
-    this.categories.forEach((categorie) => {
-      if (categorie.parent === categorieId) {
-        res.push(categorie);
-      }
-    });
+    if (categorieId === 0) {
+      return this.taches;
+    }
     this.taches.forEach((tache) => {
       if (tache.parent === categorieId) {
         res.push(tache);
@@ -264,9 +273,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   }
 
   supprimerTache(tache: Tache) {
-    const indice = this.taches.indexOf(tache);
-    this.subsTempsTache[indice].unsubscribe();
-    this.compteurTache[indice] = 0;
+    if (tache.estDemaree) {
+      this.demarerStopperTache(tache);
+    }
     this.tachesService.removeTache(tache);
   }
 
