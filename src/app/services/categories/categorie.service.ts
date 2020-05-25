@@ -3,7 +3,6 @@ import {Subject} from 'rxjs';
 import * as firebase from 'firebase';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Categorie} from '../../model/categorie';
-import {Tache} from "../../model/tache";
 
 
 @Injectable({

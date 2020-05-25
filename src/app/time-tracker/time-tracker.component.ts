@@ -27,9 +27,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   // idTache: number;
   compteurTache: number[];
-  compteurCategorie: number[];
   subsTempsTache: Subscription[] = [];
-  subsTempsCategorie: Subscription[] = [];
   // dateActive: Date[];
   saveForm: FormGroup;
   tree: Map<object, any>;
@@ -68,12 +66,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       //   nvelleCate: ['']
       // }));
     });*/
-
-    this.compteurCategorie = [];
-    this.categories.forEach(() => {
-      this.subsTempsCategorie.push(new Subscription());
-      // this.edited.push([false]);
-    });
 
     this.compteurTache = [];
     this.taches.forEach(() => {
@@ -162,8 +154,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       const temps = 0;
       const parent = -1;
         // this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
-      const estDemaree = false;
-      const newCategorie = new Categorie(titre, temps, parent, estDemaree);
+      const newCategorie = new Categorie(titre, temps, parent);
       this.categorieService.createNewCategorie(newCategorie);
     } else {
       console.log('error');
@@ -172,7 +163,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
 
   onEdit(tache: Tache) {
     this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value,
-      this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
+                                   this.getCategorieIdByName(this.editForm.get('nvelleCate').value));
     this.edited = false;
   }
 
@@ -218,6 +209,16 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       }
     );
     return categorieIndexToFind;
+  }
+
+  getTachesDemaree() {
+    const res = [];
+    this.taches.forEach((tache) => {
+      if (tache.estDemaree) {
+        res.push(tache);
+      }
+    });
+    return res;
   }
 
   // getTacheWithoutParent() {
@@ -279,6 +280,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   stopperTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
     tache.temps += this.compteurTache[indice];
+    this.categories[tache.parent].temps += this.compteurTache[indice];
+    this.categorieService.updateTemps(this.categories[tache.parent]);
     // console.log(indice);
     // console.log(tache);
     // console.log(this.taches);
@@ -288,39 +291,39 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     // this.tachesService.updateTemps(tache);
   }
 
-  demarerStopperCategorie(categorie: Categorie) {
-    const indice = this.categories.indexOf(categorie);
-    const children = this.getCategorieChildren(indice);
-    categorie.estDemaree = !categorie.estDemaree;
-    if (categorie.estDemaree) {
-      children.forEach((child) => {
-        this.demarerTache(child);
-      });
-      this.subsTempsCategorie[indice] = interval(1000).subscribe((valeur: number) => (
-        this.compteurCategorie[indice] = valeur
-      ));
-    } else {
-      children.forEach((child) => {
-        this.stopperTache(child);
-      });
-      categorie.temps += this.compteurCategorie[indice];
-      this.compteurCategorie[indice] = 0;
-      this.subsTempsCategorie[indice].unsubscribe();
-      this.categorieService.updateTemps(categorie);
-    }
-  }
+  // demarerStopperCategorie(categorie: Categorie) {
+  //   const indice = this.categories.indexOf(categorie);
+  //   const children = this.getCategorieChildren(indice);
+  //   categorie.estDemaree = !categorie.estDemaree;
+  //   if (categorie.estDemaree) {
+  //     children.forEach((child) => {
+  //       this.demarerTache(child);
+  //     });
+  //     this.subsTempsCategorie[indice] = interval(1000).subscribe((valeur: number) => (
+  //       this.compteurCategorie[indice] = valeur
+  //     ));
+  //   } else {
+  //     children.forEach((child) => {
+  //       this.stopperTache(child);
+  //     });
+  //     categorie.temps += this.compteurCategorie[indice];
+  //     this.compteurCategorie[indice] = 0;
+  //     this.subsTempsCategorie[indice].unsubscribe();
+  //     this.categorieService.updateTemps(categorie);
+  //   }
+  // }
 
-  tempsDynamiqueTache(tache: Tache, i: number) {
+  tempsDynamiqueTache(tache: Tache/*, i: number*/) {
+    const i = this.taches.indexOf(tache);
     const date = new Date(0);
     date.setSeconds(this.compteurTache[i] ? tache.temps + this.compteurTache[i] : tache.temps); // specify value for SECONDS here
     return date.toISOString().substr(11, 8);
     // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
 
-  tempsDynamiqueCategorie(categorie: Categorie, i: number) {
+  tempsCategorie(categorie: Categorie) {
     const date = new Date(0);
-    date.setSeconds(this.compteurCategorie[i] ?
-      categorie.temps + this.compteurCategorie[i] : categorie.temps); // specify value for SECONDS here
+    date.setSeconds( categorie.temps); // specify value for SECONDS here
     return date.toISOString().substr(11, 8);
     // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
