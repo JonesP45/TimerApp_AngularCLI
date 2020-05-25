@@ -10,22 +10,34 @@ import {Categorie} from '../../model/categorie';
 })
 export class CategorieService {
 
-  categories: Categorie[] = [];
-  categorieSubject = new Subject<Categorie[]>();
+  categories: Categorie[] = []; // liste des categories enregistrees
+  categorieSubject = new Subject<Categorie[]>(); // Sujet de categories
 
+  /**
+   * Crée une instance du service de categorie
+   */
   constructor() {
     this.getCategories();
   }
 
+  /**
+   * Previens les observateurs que la liste des categories a changee
+   */
   emitCategorie() {
     this.categorieSubject.next(this.categories);
     // this.tachesSubject.next(this.quickStartTaches);
   }
 
+  /**
+   * Sauvegarde la liste des categories dans la base de donnees
+   */
   saveCategorie() {
     firebase.database().ref('/categories').set(this.categories);
   }
 
+  /**
+   * Recupere toutes les categories presentent dans la base de donnees
+   */
   getCategories() {
     firebase.database().ref('/categories')
       .on('value', (data: DataSnapshot) => {
@@ -34,12 +46,20 @@ export class CategorieService {
       });
   }
 
+  /**
+   * Ajoute une nouvelle categorie a la liste des categories
+   * @param Categorie newCategorie La categorie que l'on veut ajouter aux categories
+   */
   createNewCategorie(newCategorie: Categorie) {
     this.categories.push(newCategorie);
     this.saveCategorie();
     this.emitCategorie();
   }
 
+  /**
+   * Retire une categorie de la liste des categories et applique la modification en base
+   * @param Categorie categorie La categorie que l'on veut retirer
+   */
   removeCategorie(categorie: Categorie) {
     const categorieIndexToRemove = this.categories.findIndex(
       (categorieE1) => {
@@ -67,15 +87,19 @@ export class CategorieService {
     this.emitCategorie();
   }
 
+  /**
+   * Actualise le temps passe sur une categorie
+   * @param Categorie categorie La categorie a laquelle on veut actualier son temps
+   */
   updateTemps(categorie: Categorie) {
-    const categorieIndexToRemove = this.categories.findIndex(
+    const categorieIndexToUpdate = this.categories.findIndex(
       (categorieE1) => {
         if (categorieE1 === categorie){
           return true;
         }
       }
     );
-    this.categories[categorieIndexToRemove] = categorie;
+    this.categories[categorieIndexToUpdate] = categorie;
     this.saveCategorie();
     this.emitCategorie();
   }
