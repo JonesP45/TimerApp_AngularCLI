@@ -16,7 +16,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class TimeTrackerComponent implements OnInit, OnDestroy {
 
-  edited = false;
+  editedQuickStart: boolean[] = [];
 
   categories: Categorie[];
   taches: Tache[];
@@ -54,6 +54,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.compteur = [];
     this.taches.forEach(() => {
       this.subsTemps.push(new Subscription());
+      this.editedQuickStart.push(false);
     });
     // this.dateActive = [];
     // this.taches.forEach((tache: Tache) => {
@@ -109,9 +110,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     });
   }
 
-  onEdit(tache: Tache) {
+  onEditQuickStart(tache: Tache, i: number) {
     this.tachesService.modifyTache(tache, this.editForm.get('nveauTitre').value, this.editForm.get('nvelleCate').value);
-    this.edited = false;
+    this.editedQuickStart[i] = false;
   }
 
   onSaveCategorie() {
@@ -228,8 +229,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.tachesService.removeTache(tache);
   }
 
-  modifierTache(tache: Tache) {
-    this.edited = true;
+  modifierQuickStartTache(i: number) {
+    this.editedQuickStart[i] = true;
   }
 
   ngOnDestroy() {

@@ -24,7 +24,6 @@
         <div class="form-group col">
           <label for="parent"> à </label>
           <select class="form-control" name="parent" id="parent" formControlName="parent">
-            <option value="-1">Aucun</option>
             <option *ngFor="let categorie of categories" value="{{categorie.titre}}">
               {{categorie.titre}}
             </option>
@@ -55,18 +54,18 @@
           <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
         </span>
 
-      {{tache.titre}} {{tempsDynamique(tache, i)}}
+      {{tache.titre}} {{tempsDynamique(tache, i)}} {{i}}
 
-      <span (click)="modifierTache(tache)">
+      <span (click)="modifierQuickStartTache(i)">
           <i class="fa fa-edit"></i>
-        </span>
+      </span>
 
       <span (click)="supprimerTache(tache)">
           <i class="fa fa-remove"></i>
-        </span>
+      </span>
 
-      <div *ngIf="edited" class="input-group">
-        <form [formGroup]="editForm" (ngSubmit)="onEdit(tache)">
+      <div *ngIf="editedQuickStart[i]" class="input-group">
+        <form [formGroup]="editForm" (ngSubmit)="onEditQuickStart(tache, i)">
           <div class="form-row">
 
             <div class="form-group col">
@@ -77,7 +76,6 @@
             <div class="form-group col">
               <label for="nvelleCate">Déplacer dans la catégorie: </label>
               <select class="form-control" name="parent" id="nvelleCate" formControlName="nvelleCate">
-                <option value="-1">Aucun</option>
                 <option *ngFor="let categorie of categories" value="{{categorie.titre}}">
                   {{categorie.titre}}
                 </option>
@@ -106,7 +104,8 @@
 
             {{tache.titre}} {{tempsDynamique(tache, i)}}
 
-            <span (click)="modifierTache(tache)">
+<!--            <span (click)="modifierTache(tache)">-->
+            <span>
               <i class="fa fa-edit"></i>
             </span>
 
