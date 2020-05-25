@@ -3,6 +3,7 @@ import {Subject} from 'rxjs';
 import * as firebase from 'firebase';
 import DataSnapshot = firebase.database.DataSnapshot;
 import {Categorie} from '../../model/categorie';
+import {Tache} from "../../model/tache";
 
 
 @Injectable({
@@ -63,6 +64,19 @@ export class CategorieService {
     );
     this.categories[categorieIndexToModify].titre = newTitre;
     this.categories[categorieIndexToModify].parent = newParent;
+    this.saveCategorie();
+    this.emitCategorie();
+  }
+
+  updateTemps(categorie: Categorie) {
+    const categorieIndexToRemove = this.categories.findIndex(
+      (categorieE1) => {
+        if (categorieE1 === categorie){
+          return true;
+        }
+      }
+    );
+    this.categories[categorieIndexToRemove] = categorie;
     this.saveCategorie();
     this.emitCategorie();
   }

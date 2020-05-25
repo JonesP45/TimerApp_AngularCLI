@@ -49,24 +49,26 @@ export class TachesService {
   }
 
   updateTemps(tache: Tache) {
-    const quickStartTacheIndexToRemove = this.taches.findIndex(
+    // const quickStartTacheIndexToRemove = this.taches.indexOf(tache);
+    const quickStartTacheIndexToUpdate = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){
           return true;
         }
       }
     );
-    const tacheIndexToRemove = this.taches.findIndex(
+    // const tacheIndexToRemove = this.taches.indexOf(tache);
+    const tacheIndexToUpdate = this.taches.findIndex(
       (tacheE1) => {
         if (tacheE1 === tache){
           return true;
         }
       }
     );
-    if (quickStartTacheIndexToRemove !== -1) {
-      this.quickStartTaches[quickStartTacheIndexToRemove] = tache;
+    if (quickStartTacheIndexToUpdate !== -1) {
+      this.quickStartTaches[quickStartTacheIndexToUpdate] = tache;
     }
-    this.taches[tacheIndexToRemove] = tache;
+    this.taches[tacheIndexToUpdate] = tache;
     this.saveTache();
     this.emitTaches();
   }
