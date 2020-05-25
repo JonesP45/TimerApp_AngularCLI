@@ -177,6 +177,24 @@
       </span>
 
       <ul *ngIf="showChildren[i] && i == 0">
+        <li class="list-group-item" *ngFor="let tache of getTachesWithoutParent(); let j = index">
+          <span>
+            <span (click)="demarerStopperTache(tache)">
+              <i class="fa fa-lg" [ngClass]="tache.estDemaree ? 'fa-pause-circle-o' : 'fa-play-circle-o'"></i>
+            </span>
+
+            {{tache.titre}} {{tempsDynamiqueTache(tache)}}
+
+            <span (click)="modifierTache(tache)">
+              <i class="fa fa-edit"></i>
+            </span>
+
+            <span (click)="supprimerTache(tache)">
+              <i class="fa fa-remove"></i>
+            </span>
+          </span>
+        </li>
+
         <li class="list-group-item" *ngFor="let categorie of categories | slice : 1; let j = index" >
           {{categorie.titre}}
           <ul *ngFor="let tache of getCategorieChildren(getCategorieIdByName(categorie.titre))">
