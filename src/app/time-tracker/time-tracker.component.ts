@@ -20,6 +20,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   editForm: FormGroup;
   editTache: Tache = null;
 
+  showChildren: boolean[] = [];
+
   categories: Categorie[];
   taches: Tache[];
   categoriesSubscription: Subscription;
@@ -51,13 +53,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     this.initFormSave();
     this.initFormEdited();
 
-    /*this.compteurCategorie = [];
-    this.categorieService.categories.forEach(() => {
-      this.subsTempsCategorie.push(new Subscription());
-      // this.edited.push([false]);
+    this.categories.forEach(() => {
+      this.showChildren.push(false);
     });
 
-    this.compteurTache = [];
+    /*this.compteurTache = [];
     this.tachesService.taches.forEach(() => {
       this.subsTempsTache.push(new Subscription());
       // this.edited.push(false);
@@ -221,6 +221,17 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     return res;
   }
 
+  showTacheOfCategorie(indice: number) {
+    let i = 0;
+    this.showChildren.forEach(() => {
+      if (i !== indice) {
+        this.showChildren[i] = false;
+      }
+      i++;
+    });
+    this.showChildren[indice] = !this.showChildren[indice];
+  }
+
   // getTacheWithoutParent() {
   //   const res = [];
   //   this.taches.forEach((tache) => {
@@ -281,6 +292,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const indice = this.taches.indexOf(tache);
     tache.temps += this.compteurTache[indice];
     this.categories[tache.parent].temps += this.compteurTache[indice];
+    this.categories[this.getCategorieIdByName('All tasks')].temps += this.compteurTache[indice];
+    this.categorieService.updateTemps(this.categories[this.getCategorieIdByName('All tasks')]);
     this.categorieService.updateTemps(this.categories[tache.parent]);
     // console.log(indice);
     // console.log(tache);
