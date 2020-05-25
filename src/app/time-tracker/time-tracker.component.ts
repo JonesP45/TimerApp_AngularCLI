@@ -22,9 +22,11 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   tachesSubscription: Subscription;
 
   // idTache: number;
-  compteur: number[];
+  compteurTache: number[];
+  compteurCategorie: number[];
+  subsTempsTache: Subscription[] = [];
+  subsTempsCategorie: Subscription[] = [];
   // dateActive: Date[];
-  subsTemps: Subscription[] = [];
   saveForm: FormGroup;
   tree: Map<object, any>;
 
@@ -48,9 +50,13 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     // this.taches = this.stockageLocalService.recupererTaches();
     // this.idTache = this.taches.length;
     // this.idTache = 0;
-    this.compteur = [];
+    this.compteurTache = [];
     this.taches.forEach(() => {
-      this.subsTemps.push(new Subscription());
+      this.subsTempsTache.push(new Subscription());
+    });
+    this.compteurCategorie = [];
+    this.categories.forEach(() => {
+      this.subsTempsCategorie.push(new Subscription());
     });
     // this.dateActive = [];
     // this.taches.forEach((tache: Tache) => {
@@ -73,8 +79,6 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
       this.onSaveTache();
     } else if (this.saveForm.get('type').value === 'categorie'){
       this.onSaveCategorie();
-    } else {
-      console.log('Error: Veuillez choisir ce que vous voulez enregistrer');
     }
   }
 
@@ -84,10 +88,9 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = false;
     // const date1 = new Date();
     // const date2 = new Date();
-    const parent = this.saveForm.get('parent').value === '' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
+    const parent = this.getCategorieIdByName(this.saveForm.get('parent').value);
     const newTache = new Tache(titre, temps, estDemaree, /*date1, date2, */parent);
     this.tachesService.createNewTache(newTache);
-    console.log(this.taches);
   }
 
   onQuickStart() {
@@ -96,7 +99,7 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     const estDemaree = true;
     // const Date1 = new Date();
     // const Date2 = new Date();
-    const parent = -1;
+    const parent = 0; // id single tasks
     const newTache = new Tache(titre, temps, estDemaree/*, Date1, Date2*/ , parent);
     this.tachesService.createNewQuickStartTache(newTache);
   }
@@ -104,7 +107,8 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   onSaveCategorie() {
     const titre = this.saveForm.get('title').value;
     const temps = 0;
-    const parent = this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
+    const parent = -1;
+      // this.saveForm.get('parent').value === 'Aucun' ? -1 : this.getCategorieIdByName(this.saveForm.get('parent').value);
     const estDemaree = false;
     const newCategorie = new Categorie(titre, temps, parent, estDemaree);
     this.categorieService.createNewCategorie(newCategorie);
@@ -183,16 +187,19 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
   // }
 
   demarerStopperTache(tache: Tache) {
-    const indice = this.taches.indexOf(tache);
+    // const indice = this.taches.indexOf(tache);
     tache.estDemaree = !tache.estDemaree;
     if (tache.estDemaree) {
-      this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
+      this.demarerTache(tache);
+      // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (this.compteur[indice] = valeur));
+
       // this.subsTemps[indice] = interval(1000).subscribe((valeur: number) => (tache.temps = valeur));
       // this.dateActive[indice] = new Date();
     } else {
-      tache.temps += this.compteur[indice];
-      this.compteur[indice] = 0;
-      this.subsTemps[indice].unsubscribe();
+      this.stopperTache(tache);
+      // tache.temps += this.compteur[indice];
+      // this.compteur[indice] = 0;
+      // this.subsTemps[indice].unsubscribe();
       this.tachesService.updateTemps(tache);
 
       // const maintenant = new Date();
@@ -202,23 +209,64 @@ export class TimeTrackerComponent implements OnInit, OnDestroy {
     }
   }
 
+  demarerTache(tache: Tache) {
+    const indice = this.taches.indexOf(tache);
+    this.subsTempsTache[indice] = interval(1000).subscribe((valeur: number) => (this.compteurTache[indice] = valeur));
+  }
+
+  stopperTache(tache: Tache) {
+    const indice = this.taches.indexOf(tache);
+    tache.temps += this.compteurTache[indice];
+    // console.log(indice);
+    // console.log(tache);
+    // console.log(this.taches);
+    // console.log(this.subsTempsTache);
+    this.compteurTache[indice] = 0;
+    this.subsTempsTache[indice].unsubscribe();
+    // this.tachesService.updateTemps(tache);
+  }
+
   demarerStopperCategorie(categorie: Categorie) {
     const indice = this.categories.indexOf(categorie);
     const children = this.getCategorieChildren(indice);
     categorie.estDemaree = !categorie.estDemaree;
+    if (categorie.estDemaree) {
+      children.forEach((child) => {
+        this.demarerTache(child);
+      });
+      this.subsTempsCategorie[indice] = interval(1000).subscribe((valeur: number) => (
+        this.compteurCategorie[indice] = valeur
+      ));
+    } else {
+      children.forEach((child) => {
+        this.stopperTache(child);
+      });
+      categorie.temps += this.compteurCategorie[indice];
+      this.compteurCategorie[indice] = 0;
+      this.subsTempsCategorie[indice].unsubscribe();
+      this.categorieService.updateTemps(categorie);
+    }
   }
 
-  tempsDynamique(tache: Tache, i: number) {
+  tempsDynamiqueTache(tache: Tache, i: number) {
     const date = new Date(0);
-    date.setSeconds(this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps); // specify value for SECONDS here
+    date.setSeconds(this.compteurTache[i] ? tache.temps + this.compteurTache[i] : tache.temps); // specify value for SECONDS here
+    return date.toISOString().substr(11, 8);
+    // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
+  }
+
+  tempsDynamiqueCategorie(categorie: Categorie, i: number) {
+    const date = new Date(0);
+    date.setSeconds(this.compteurCategorie[i] ?
+      categorie.temps + this.compteurCategorie[i] : categorie.temps); // specify value for SECONDS here
     return date.toISOString().substr(11, 8);
     // return this.compteur[i] ? tache.temps + this.compteur[i] : tache.temps;
   }
 
   supprimerTache(tache: Tache) {
     const indice = this.taches.indexOf(tache);
-    this.subsTemps[indice].unsubscribe();
-    this.compteur[indice] = 0;
+    this.subsTempsTache[indice].unsubscribe();
+    this.compteurTache[indice] = 0;
     this.tachesService.removeTache(tache);
   }
 
